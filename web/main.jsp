@@ -618,7 +618,7 @@
 					</h3>
 				</div>
 				<div class="modal-body">
-<<<<<<< .mine
+
 					  <ul id="myTab" class="nav nav-tabs">
 							<li class="active"><a href="#login" data-toggle="tab">登录</a></li>
 							<li><a href="#regirest" data-toggle="tab">注册</a></li>
@@ -706,7 +706,7 @@
 			                 </form>	
 				         </div>
 					</div>
-||||||| .r20
+
 					  <ul id="myTab" class="nav nav-tabs">
 							<li class="active"><a href="#login" data-toggle="tab">登录</a></li>
 							<li><a href="#regirest" data-toggle="tab">注册</a></li>
@@ -798,7 +798,7 @@
 			                 </form>							
 				         </div>
 					</div>
-=======
+
 	                  <form class="form-horizontal">
 						<div class="form-group" style="margin-left:251px">
 						 	  <label class="text">还没有SaleHome账号？<a href="javascript:void(0);">忘记密码</a></label>
@@ -821,7 +821,7 @@
 	                          <button type="submit" class="btn btn-default">登录</button>
 	                      </div>
 	                  </form>
->>>>>>> .r3
+
 			    </div>
 			</div>
 		</div>
@@ -951,7 +951,6 @@
 	<script type="text/javascript" src="<%=path %>/js/jquery.isotope.min.js"></script><!-- isotope -->
 	<script type="text/javascript" src="<%=path %>/js/jquery.magnific-popup.min.js"></script><!-- magnific-popup -->
 	<script type="text/javascript" src="<%=path %>/js/scripts.js"></script><!-- Scripts -->
-<<<<<<< .mine
 	<script type="text/javascript" src="<%=path%>/js/bootstrapValidator.js"></script>
     <script type="text/javascript" src="<%=path%>/js/zh_CN.js"></script>
 	<script>
@@ -1187,7 +1186,7 @@
     		}
     	});
     </script>
-||||||| .r20
+
 	<script type="text/javascript" src="<%=path%>/js/bootstrapValidator.js"></script>
     <script type="text/javascript" src="<%=path%>/js/zh_CN.js"></script>
 	<script>
@@ -1341,7 +1340,5 @@
     		}
     	});
     </script>
-=======
->>>>>>> .r3
 </body>
 </html>
