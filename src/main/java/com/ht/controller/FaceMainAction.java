@@ -307,10 +307,10 @@ public class FaceMainAction extends ActionSupport implements ServletRequestAware
 		articlelist = articleService.facetaricle();
 		DetachedCriteria dc = DetachedCriteria.forClass(TBuildings.class);
 		dc.addOrder(Order.desc("createdTime"));
-		dc.add(Restrictions.eq("statusInt", 1));
+		dc.add(Restrictions.eq("statusInt", 0));
 		loupanlist = louPanService.pagelist(dc, 0, 10);
 		DetachedCriteria dc1 = DetachedCriteria.forClass(TActivity.class);
-		dc1.add(Restrictions.eq("statusInt", 1));
+		dc1.add(Restrictions.eq("statusInt", 0));
 		dc1.addOrder(Order.desc("startTime"));
 		activitylist = activityService.pagelist(dc1, 0, 2);
 		return "articlelist";
@@ -318,12 +318,12 @@ public class FaceMainAction extends ActionSupport implements ServletRequestAware
 	public String facemaininfo() throws Exception{
 		loupan = louPanService.queryById(loupan.getIdString());
 		DetachedCriteria dc = DetachedCriteria.forClass(TBuilding.class);
-		dc.add(Restrictions.eq("statusInt",1));
+		dc.add(Restrictions.eq("statusInt",0));
 		dc.add(Restrictions.eq("buildingsId", loupan.getIdString()));
 		dc.addOrder(Order.desc("createdTimeString"));
 		loudonglist = louDongService.pagelist(dc, 0, 4);
 		DetachedCriteria dc1 = DetachedCriteria.forClass(TBuildings.class);
-		dc1.add(Restrictions.eq("statusInt", 1));
+		dc1.add(Restrictions.eq("statusInt", 0));
 		dc1.addOrder(Order.desc("createdTime"));
 		loupanlist = louPanService.pagelist(dc1, 0, 100);
 		DetachedCriteria dc2 = DetachedCriteria.forClass(THouse.class);
@@ -352,7 +352,7 @@ public class FaceMainAction extends ActionSupport implements ServletRequestAware
 		dc3.addOrder(Order.desc("commentTime"));
 		commentlist = commentService.pagelist(dc3, 0, 100);
 		DetachedCriteria dc4 = DetachedCriteria.forClass(TActivity.class);
-		dc4.add(Restrictions.eq("statusInt", 1));
+		dc4.add(Restrictions.eq("statusInt", 0));
 		dc4.addOrder(Order.desc("startTime"));
 		activitylist = activityService.pagelist(dc4, 0, 2);
 		articlelist = articleService.facetaricle();
@@ -367,11 +367,12 @@ public class FaceMainAction extends ActionSupport implements ServletRequestAware
 		int num = houseService.count("jxsidString",id);
 		DetachedCriteria dc2 = DetachedCriteria.forClass(THouse.class);
 		dc2.add(Restrictions.eq("jxsidString",id));
+		dc2.add(Restrictions.eq("statusInt",0));
 		dc2.addOrder(Order.desc("createdTime"));
 		houselist = houseService.pagelist(dc2, 0, num);
 		articlelist = articleService.facetaricle();
 		DetachedCriteria dc4 = DetachedCriteria.forClass(TActivity.class);
-		dc4.add(Restrictions.eq("statusInt", 1));
+		dc4.add(Restrictions.eq("statusInt", 0));
 		dc4.addOrder(Order.desc("startTime"));
 		activitylist = activityService.pagelist(dc4, 0, 2);
 		request.setAttribute("num", houselist.size());
@@ -380,7 +381,7 @@ public class FaceMainAction extends ActionSupport implements ServletRequestAware
 	public String bestloupan() throws Exception{
 		articlelist = articleService.facetaricle();
 		DetachedCriteria dc4 = DetachedCriteria.forClass(TActivity.class);
-		dc4.add(Restrictions.eq("statusInt", 1));
+		dc4.add(Restrictions.eq("statusInt", 0));
 		dc4.addOrder(Order.desc("startTime"));
 		activitylist = activityService.pagelist(dc4, 0, 2);
 		paginglist();
@@ -389,7 +390,7 @@ public class FaceMainAction extends ActionSupport implements ServletRequestAware
 	public String othersloupan() throws Exception{
 		articlelist = articleService.facetaricle();
 		DetachedCriteria dc4 = DetachedCriteria.forClass(TActivity.class);
-		dc4.add(Restrictions.eq("statusInt", 1));
+		dc4.add(Restrictions.eq("statusInt", 0));
 		dc4.addOrder(Order.desc("startTime"));
 		activitylist = activityService.pagelist(dc4, 0, 2);
 		likepage();
@@ -398,7 +399,7 @@ public class FaceMainAction extends ActionSupport implements ServletRequestAware
 	}
 	public String manyarticle() throws Exception{
 		DetachedCriteria dc4 = DetachedCriteria.forClass(TActivity.class);
-		dc4.add(Restrictions.eq("statusInt", 1));
+		dc4.add(Restrictions.eq("statusInt", 0));
 		dc4.addOrder(Order.desc("startTime"));
 		activitylist = activityService.pagelist(dc4, 0, 2);
 		articlelists();
@@ -416,12 +417,12 @@ public class FaceMainAction extends ActionSupport implements ServletRequestAware
 			
 		}
 		DetachedCriteria dc1 = DetachedCriteria.forClass(TBuildings.class);
-		dc1.add(Restrictions.eq("statusInt", 1));
+		dc1.add(Restrictions.eq("statusInt", 0));
 		dc1.addOrder(Order.desc("createdTime"));
 		loupanlist = louPanService.pagelist(dc1, 0, 10);
 		employeelist = employeeService.empList("angencyIdString", loupan.getJxsidString());
 		DetachedCriteria dc4 = DetachedCriteria.forClass(TActivity.class);
-		dc4.add(Restrictions.eq("statusInt", 1));
+		dc4.add(Restrictions.eq("statusInt", 0));
 		dc4.addOrder(Order.desc("startTime"));
 		activitylist = activityService.pagelist(dc4, 0, 2);
 		return "houseinfo";
@@ -434,7 +435,7 @@ public class FaceMainAction extends ActionSupport implements ServletRequestAware
 		}
 		articlelist = articleService.facetaricle();
 		DetachedCriteria dc4 = DetachedCriteria.forClass(TActivity.class);
-		dc4.add(Restrictions.eq("statusInt", 1));
+		dc4.add(Restrictions.eq("statusInt", 0));
 		dc4.addOrder(Order.desc("startTime"));
 		activitylist = activityService.pagelist(dc4, 0, 2);
 		request.setAttribute("num", loupanlist.size());
@@ -443,7 +444,7 @@ public class FaceMainAction extends ActionSupport implements ServletRequestAware
 	public String buyhouseliucheng(){
 		articlelist = articleService.facetaricle();
 		DetachedCriteria dc4 = DetachedCriteria.forClass(TActivity.class);
-		dc4.add(Restrictions.eq("statusInt", 1));
+		dc4.add(Restrictions.eq("statusInt", 0));
 		dc4.addOrder(Order.desc("startTime"));
 		activitylist = activityService.pagelist(dc4, 0, 2);
 		return "buyhouseliucheng";
@@ -451,7 +452,7 @@ public class FaceMainAction extends ActionSupport implements ServletRequestAware
 	public String buyhouseliuchengtwo(){
 		articlelist = articleService.facetaricle();
 		DetachedCriteria dc4 = DetachedCriteria.forClass(TActivity.class);
-		dc4.add(Restrictions.eq("statusInt", 1));
+		dc4.add(Restrictions.eq("statusInt", 0));
 		dc4.addOrder(Order.desc("startTime"));
 		activitylist = activityService.pagelist(dc4, 0, 2);
 		return "buyhouseliuchengtwo";
@@ -496,7 +497,7 @@ public class FaceMainAction extends ActionSupport implements ServletRequestAware
 			page.setPagebarsize(0);
 		}
 		DetachedCriteria dc = DetachedCriteria.forClass(TBuildings.class);
-		dc.add(Restrictions.eq("statusInt", 1));
+		dc.add(Restrictions.eq("statusInt", 0));
 		dc.addOrder(Order.desc("createdTime"));
 		loupanlist = louPanService.pagelist(dc, page.getStarlocal(), page.getPagebarsize());
 		request.setAttribute("pager", page);
@@ -534,17 +535,9 @@ public class FaceMainAction extends ActionSupport implements ServletRequestAware
 			page.setStarlocal(0);
 			page.setPagebarsize(0);
 		}
-		if((page.getStarlocal()+page.getPagebarsize())>=page.getPagebarsum()){
-			loupanlist = louPanService.likebuildings("t.addressString","%"+loupan.getNameString()+"%",page.getStarlocal(),page.getPagebarsize());
-			page.setStarlocal(page.getPagebarsum()-page.getPagebarsize());
-			request.setAttribute("num", loupanlist.size());
-			request.setAttribute("pager", page);
-			return;
-		}else{
-			loupanlist = louPanService.likebuildings("t.addressString","%"+loupan.getNameString()+"%",page.getStarlocal(),page.getPagebarsize());
-			request.setAttribute("pager", page);
-			request.setAttribute("num", loupanlist.size());
-		}
+		loupanlist = louPanService.likebuildings("t.addressString","%"+loupan.getNameString()+"%",page.getStarlocal(),page.getPagebarsize());
+		request.setAttribute("pager", page);
+		request.setAttribute("num", loupanlist.size());
 	}
 	public void articlelists() throws Exception {
 		//实例化javabean，取参数
@@ -578,25 +571,18 @@ public class FaceMainAction extends ActionSupport implements ServletRequestAware
 			page.setStarlocal(0);
 			page.setPagebarsize(0);
 		}
-		if((page.getStarlocal()+page.getPagebarsize())>=page.getPagebarsum()){
-			DetachedCriteria dc = DetachedCriteria.forClass(TArticle.class);
-			dc.addOrder(Order.desc("createdTime"));
-			articlelist = articleService.pagelist(dc, page.getStarlocal(), page.getPagebarsize());
-			page.setStarlocal(page.getPagebarsum()-page.getPagebarsize());
-			request.setAttribute("pager", page);
-			return;
-		}else{
-			DetachedCriteria dc = DetachedCriteria.forClass(TArticle.class);
-			dc.addOrder(Order.desc("createdTime"));
-			articlelist = articleService.pagelist(dc, page.getStarlocal(), page.getPagebarsize());
-			request.setAttribute("pager", page);
-		}
+		DetachedCriteria dc = DetachedCriteria.forClass(TArticle.class);
+		dc.addOrder(Order.desc("createdTime"));
+		articlelist = articleService.pagelist(dc, page.getStarlocal(), page.getPagebarsize());
+		request.setAttribute("pager", page);
 	}
 
+	@Override
 	public void setServletResponse(HttpServletResponse response) {
 		this.response=response;
 	}
 
+	@Override
 	public void setServletRequest(HttpServletRequest request) {
 		this.request=request;
 		

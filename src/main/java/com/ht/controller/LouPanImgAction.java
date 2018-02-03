@@ -23,6 +23,7 @@ import com.ht.pojo.TBuildingsImg;
 import com.ht.service.LouPanImgService;
 import com.ht.service.LouPanService;
 import com.opensymphony.xwork2.ActionSupport;
+import com.sun.org.apache.xerces.internal.impl.xs.SchemaSymbols;
 
 public class LouPanImgAction extends ActionSupport implements ServletResponseAware,ServletRequestAware{
 
@@ -232,19 +233,20 @@ public class LouPanImgAction extends ActionSupport implements ServletResponseAwa
 			page.setStarlocal(0);
 			page.setPagebarsize(0);
 		}
-		if((page.getStarlocal()+page.getPagebarsize())>=page.getPagebarsum()){
+//		if((page.getStarlocal()+page.getPagebarsize())>=page.getPagebarsum()){
+//			DetachedCriteria dc = DetachedCriteria.forClass(TBuildingsImg.class);
+//			dc.add(Restrictions.eq("jxsidString",tagency.getIdString()));
+//			loupanimglist = louPanImgService.pagelist(dc,(page.getPagebarsum()-page.getPagebarsize()), page.getPagebarsize());
+//			page.setStarlocal(page.getPagebarsum()-page.getPagebarsize());
+//			request.setAttribute("pager", page);
+//			return;
+//		}else{
 			DetachedCriteria dc = DetachedCriteria.forClass(TBuildingsImg.class);
 			dc.add(Restrictions.eq("jxsidString",tagency.getIdString()));
-			loupanimglist = louPanImgService.pagelist(dc,(page.getPagebarsum()-page.getPagebarsize()), page.getPagebarsize());
-			page.setStarlocal(page.getPagebarsum()-page.getPagebarsize());
-			request.setAttribute("pager", page);
-			return;
-		}else{
-			DetachedCriteria dc = DetachedCriteria.forClass(TBuildingsImg.class);
-			dc.add(Restrictions.eq("jxsidString",tagency.getIdString()));
+			System.out.println(page.getStarlocal()+"========");
 			loupanimglist = louPanImgService.pagelist(dc, page.getStarlocal(), page.getPagebarsize());
 			request.setAttribute("pager", page);
-		}
+//		}
 	}
 
 }

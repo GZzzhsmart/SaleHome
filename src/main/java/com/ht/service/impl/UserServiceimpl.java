@@ -1,11 +1,12 @@
 package com.ht.service.impl;
 
+import java.util.List;
+
+import org.hibernate.criterion.DetachedCriteria;
+
 import com.ht.dao.UserDAO;
 import com.ht.pojo.TUser;
 import com.ht.service.UserService;
-import org.hibernate.criterion.DetachedCriteria;
-
-import java.util.List;
 
 public class UserServiceimpl implements UserService{
 
@@ -67,7 +68,7 @@ public class UserServiceimpl implements UserService{
 		userDAO.updateuserpwd(user);		
 	}
 
-	
+	@Override
 	public List<TUser> finduser(String column, String ifvalue) {
 		return userDAO.finduser(column,ifvalue);
 	}

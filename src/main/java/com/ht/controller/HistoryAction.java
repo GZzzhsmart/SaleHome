@@ -1,5 +1,20 @@
 package com.ht.controller;
 
+import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.struts2.interceptor.ServletRequestAware;
+import org.apache.struts2.interceptor.ServletResponseAware;
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
+
 import com.alibaba.fastjson.JSON;
 import com.ht.pojo.PagingBean;
 import com.ht.pojo.TBaobiao;
@@ -7,19 +22,7 @@ import com.ht.pojo.THistory;
 import com.ht.pojo.TUser;
 import com.ht.service.HistoryService;
 import com.opensymphony.xwork2.ActionSupport;
-import org.apache.struts2.interceptor.ServletRequestAware;
-import org.apache.struts2.interceptor.ServletResponseAware;
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import java.io.PrintWriter;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
+import com.sun.java.swing.plaf.windows.WindowsInternalFrameTitlePane.ScalableIconUIResource;
 
 public class HistoryAction extends ActionSupport implements ServletRequestAware,ServletResponseAware{
 
@@ -137,8 +140,11 @@ public class HistoryAction extends ActionSupport implements ServletRequestAware,
 			page.setCurrentpage(Integer.parseInt(currentpage));
 		}
 		if(handle==null || handle.equals("")){
-			page.setHandle("firstpage");
-			//当前页的操作
+			if(currentpage==null || currentpage.equals("")){
+				page.setCurrentpage(1);
+			}else{	
+				page.setCurrentpage(Integer.parseInt(currentpage));
+			}
 		}else {
 			page.setHandle(handle);
 		}
@@ -147,42 +153,26 @@ public class HistoryAction extends ActionSupport implements ServletRequestAware,
 			page.setStarlocal(0);
 			page.setPagebarsize(0);
 		}
-		if((page.getStarlocal()+page.getPagebarsize())>=page.getPagebarsum()){
-			DetachedCriteria dc = DetachedCriteria.forClass(THistory.class);
-			if(startTime==null ||endTime==null || startTime.equals("") || endTime.equals("")){
-				dc.add(Restrictions.eq("userIdString",user.getIdString()));
-				dc.addOrder(Order.desc("createdTime"));
-			}else{
-				dc.add(Restrictions.eq("userIdString",user.getIdString()));
-				dc.add(Restrictions.between("createdTime", df.parse(startTime+" 00:00:00"), df.parse(endTime+" 23:59:59")));
-				dc.addOrder(Order.desc("createdTime"));
-			}
-			historylist = historyService.pagelist(dc,(page.getPagebarsum()-page.getPagebarsize()), page.getPagebarsize());
-			if((page.getPagebarsum()-page.getPagebarsize())<0){
-				page.setStarlocal(0);
-			}else{
-				page.setStarlocal(page.getPagebarsum()-page.getPagebarsize());
-			}
-			request.setAttribute("pager", page);
+		DetachedCriteria dc = DetachedCriteria.forClass(THistory.class);
+		if(startTime==null || endTime==null || startTime.equals("") || endTime.equals("")){
+			dc.add(Restrictions.eq("userIdString",user.getIdString()));
+			dc.addOrder(Order.desc("createdTime"));
 		}else{
-			DetachedCriteria dc = DetachedCriteria.forClass(THistory.class);
-			if(startTime==null || endTime==null || startTime.equals("") || endTime.equals("")){
-				dc.add(Restrictions.eq("userIdString",user.getIdString()));
-				dc.addOrder(Order.desc("createdTime"));
-			}else{
-				dc.add(Restrictions.eq("userIdString",user.getIdString()));
-				dc.add(Restrictions.between("createdTime",df.parse(startTime+" 00:00:00"), df.parse(endTime+" 23:59:59")));
-				dc.addOrder(Order.desc("createdTime"));
-			}
-			historylist = historyService.pagelist(dc, page.getStarlocal(), page.getPagebarsize());
-			request.setAttribute("pager", page);
+			dc.add(Restrictions.eq("userIdString",user.getIdString()));
+			dc.add(Restrictions.between("createdTime",df.parse(startTime+" 00:00:00"), df.parse(endTime+" 23:59:59")));
+			dc.addOrder(Order.desc("createdTime"));
 		}
+		System.out.println(page.getStarlocal()+"=====");
+		historylist = historyService.pagelist(dc, page.getStarlocal(), page.getPagebarsize());
+		request.setAttribute("pager", page);
 	}
 
+	@Override
 	public void setServletResponse(HttpServletResponse response) {
 		this.response=response;
 		
 	}
+	@Override
 	public void setServletRequest(HttpServletRequest request) {
 		this.request=request;
 		

@@ -204,7 +204,7 @@ public class ArticleAction extends ActionSupport implements ServletRequestAware,
 	public void paginglist1() throws Exception {
 		PagingBean page = new PagingBean();
 		//总记录条数，计算总页数
-		page.setPagebarsize(3);
+		page.setPagebarsize(10);
 		page.setPagebarsum(articleService.articlesize());
 		//当前页
 		String currentpage = request.getParameter("currentpage");
@@ -232,17 +232,10 @@ public class ArticleAction extends ActionSupport implements ServletRequestAware,
 			page.setStarlocal(0);
 			page.setPagebarsize(0);
 		}
-		if((page.getStarlocal()+page.getPagebarsize())>=page.getPagebarsum()){
-			DetachedCriteria dc = DetachedCriteria.forClass(TArticle.class);
-			articleslist = articleService.pagelist(dc,(page.getPagebarsum()-page.getPagebarsize()), page.getPagebarsize());
-			page.setStarlocal(page.getPagebarsum()-page.getPagebarsize());
-			request.setAttribute("pager", page);
-			return;
-		}else{
-			DetachedCriteria dc = DetachedCriteria.forClass(TArticle.class);
-			articleslist = articleService.pagelist(dc, page.getStarlocal(), page.getPagebarsize());
-			request.setAttribute("pager", page);
-		}
+		DetachedCriteria dc = DetachedCriteria.forClass(TArticle.class);
+		articleslist = articleService.pagelist(dc, page.getStarlocal(), page.getPagebarsize());
+		request.setAttribute("pager", page);
+
 	}
 	public void paginglist() throws Exception {
 		HttpSession session = request.getSession();
@@ -250,7 +243,7 @@ public class ArticleAction extends ActionSupport implements ServletRequestAware,
 		//实例化javabean，取参数
 		PagingBean page = new PagingBean();
 		//总记录条数，计算总页数
-		page.setPagebarsize(3);
+		page.setPagebarsize(10);
 		if(tagency==null){
 			page.setPagebarsum(articleService.articlesize());
 		}else{
@@ -282,28 +275,19 @@ public class ArticleAction extends ActionSupport implements ServletRequestAware,
 			page.setStarlocal(0);
 			page.setPagebarsize(0);
 		}
-		if((page.getStarlocal()+page.getPagebarsize())>=page.getPagebarsum()){
-			DetachedCriteria dc = DetachedCriteria.forClass(TArticle.class);
-			if(tagency!=null){
-				dc.add(Restrictions.eq("jxsidString",tagency.getIdString()));
-			}
-			articleslist = articleService.pagelist(dc,(page.getPagebarsum()-page.getPagebarsize()), page.getPagebarsize());
-			page.setStarlocal(page.getPagebarsum()-page.getPagebarsize());
-			request.setAttribute("pager", page);
-			return;
-		}else{
-			DetachedCriteria dc = DetachedCriteria.forClass(TArticle.class);
-			if(tagency!=null){
-				dc.add(Restrictions.eq("jxsidString",tagency.getIdString()));
-			}
-			articleslist = articleService.pagelist(dc, page.getStarlocal(), page.getPagebarsize());
-			request.setAttribute("pager", page);
+		DetachedCriteria dc = DetachedCriteria.forClass(TArticle.class);
+		if(tagency!=null){
+			dc.add(Restrictions.eq("jxsidString",tagency.getIdString()));
 		}
+		articleslist = articleService.pagelist(dc, page.getStarlocal(), page.getPagebarsize());
+		request.setAttribute("pager", page);
 	}
+	@Override
 	public void setServletResponse(HttpServletResponse response) {
 		this.response=response;
 		
 	}
+	@Override
 	public void setServletRequest(HttpServletRequest request) {
 		this.request=request;
 		

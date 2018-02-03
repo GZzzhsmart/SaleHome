@@ -1,7 +1,7 @@
 package com.ht.dao.impl;
 
-import com.ht.dao.UserPrizeDAO;
-import com.ht.pojo.TUserprize;
+import java.util.List;
+
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -9,7 +9,8 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
-import java.util.List;
+import com.ht.dao.UserPrizeDAO;
+import com.ht.pojo.TUserprize;
 
 public class UserPrizeDAOimpl implements UserPrizeDAO{
 
@@ -86,7 +87,7 @@ public class UserPrizeDAOimpl implements UserPrizeDAO{
 		Criteria criteria = dc.getExecutableCriteria(session);
 		double money = 0.0;
 		try {
-//            money = (double)criteria.list().get(0);
+			money =Double.parseDouble(criteria.list().get(0).toString());
 		} catch (Exception e) {
 			money=0.0;
 		}

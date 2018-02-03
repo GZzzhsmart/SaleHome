@@ -16,6 +16,7 @@
     		<result name="jxsregister">/index.jsp</result>
     		<result name="checkregisteraccount" type="json"></result>
     		<result name="sendcode"  type="json"></result>
+    		<result name="regssendcode"  type="json"></result>
     		<result name="checkcode"  type="json"></result>
     		<result name="login" type="json">/index.jsp</result>
     		<result name="main">/index.jsp</result>

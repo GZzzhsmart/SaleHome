@@ -157,24 +157,9 @@ public class LouPanAction extends ActionSupport implements ServletRequestAware, 
 		loupanlist = new ArrayList<TBuildings>();
 		loupanlist = louPanService.buildingslist("jxsidString",tagency.getIdString());
 		tagency=loupan.getTagency();
-		System.out.println(tagency.getIdString());
+		loupanlist = louPanService.loupanlist();
 		return "loupanlist";
 	}
-	public String list() throws Exception {
-		HttpSession session = request.getSession();
-		tagency = (TAgency)session.getAttribute("tagency");
-		response.setContentType("text/json;charset=utf-8");
-		PrintWriter out = response.getWriter();
-		response.setContentType("text/html;charset=utf-8");
-		loupanlist = new ArrayList<TBuildings>();
-		loupanlist = louPanService.buildingslist("jxsidString",tagency.getIdString());
-		System.out.println(loupanlist.size());
-		System.out.println(JSON.toJSON(loupanlist));
-		listjson = JSON.toJSONString(loupanlist);
-		out.print(JSON.toJSONString(loupanlist));
-		return null;
-	}
-
 	public String showloupan() throws Exception {
 		logger.info("Ip为："+request.getRemoteAddr()+"的用户正在查看单个id为"+loupan.getIdString()+"楼盘的信息，当前时间为："+new Date().toLocaleString());
 		loupan = louPanService.queryById(loupan.getIdString());
@@ -190,7 +175,8 @@ public class LouPanAction extends ActionSupport implements ServletRequestAware, 
 	public String updatelpstatus() throws Exception {
 		logger.info("Ip为："+request.getRemoteAddr()+"的用户正在更新id为"+loupan.getIdString()+"楼盘的状态，当前时间为："+new Date().toLocaleString());
 		louPanService.update(loupan);
-		return "updatelpstatus";
+		loupanlist = louPanService.loupanlist();
+		return "pageloupan";
 	}
 
 	public String deletelpstatus() throws Exception {
@@ -226,8 +212,8 @@ public class LouPanAction extends ActionSupport implements ServletRequestAware, 
 			String path = fileupinfo.getDocFileName();
 		} catch (Exception e) {
 			louPanService.add(loupan);
-			paginglist();
-			return "addloupan";
+			loupanlist = louPanService.loupanlist();
+			return "pageloupan";
 		}	
 		if(!fileupinfo.getDoc().equals("") || fileupinfo.getDoc()!=null){
 			String filepath = request.getRealPath("/")+"upfile"; 
@@ -242,12 +228,12 @@ public class LouPanAction extends ActionSupport implements ServletRequestAware, 
 			FileUtils.copyFile(fileupinfo.getDoc(), new File(filepath,newname));
 		}
 		louPanService.add(loupan);
-		paginglist();
-		return "addloupan";
+		loupanlist = louPanService.loupanlist();
+		return "pageloupan";
 	}
 	public String pageloupan() throws Exception {
 		logger.info("Ip为："+request.getRemoteAddr()+"的用户正在分页查看楼盘，当前时间为："+new Date().toLocaleString());
-		paginglist();
+		loupanlist = louPanService.loupanlist();
 		return "pageloupan";
 	}
 	public String  deletemanyloupan() throws Exception{
@@ -258,104 +244,8 @@ public class LouPanAction extends ActionSupport implements ServletRequestAware, 
 			logger.info("Ip为："+request.getRemoteAddr()+"的用户正在删除多个楼盘,楼盘"+i+"编号为"+idstring[i]+"，当前时间为："+new Date().toLocaleString());
 			louPanService.delete(loupan);
 		}
-		paginglist();
-		return "deletemanyloupan";
-	}
-	public void paginglist() throws Exception {
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		HttpSession session = request.getSession();
-		tagency = (TAgency)session.getAttribute("tagency");
-		TEmployee employee = (TEmployee)session.getAttribute("employee");
-		//实例化javabean，取参数
-		PagingBean page = new PagingBean();
-		//总记录条数，计算总页数
-		page.setPagebarsize(3);
-		if(tagency==null){
-			if(startTime==null || endTime==null || startTime.equals("") || endTime.equals("")){
-				page.setPagebarsum(louPanService.count("jxsidString", employee.getAngencyIdString()));
-			}else{
-				DetachedCriteria dc = DetachedCriteria.forClass(TBuildings.class);
-				dc.add(Restrictions.between("createdTime", df.parse(startTime+" 00:00:00"), df.parse(endTime+" 23:59:59")));
-				dc.add(Restrictions.eq("jxsidString", employee.getAngencyIdString()));
-				page.setPagebarsum(louPanService.pagecount(dc));
-			}
-		}else{
-			if(startTime==null || endTime==null || startTime.equals("") || endTime.equals("")){
-				page.setPagebarsum(louPanService.count("jxsidString", tagency.getIdString()));
-			}else{
-				DetachedCriteria dc = DetachedCriteria.forClass(TBuildings.class);
-				dc.add(Restrictions.between("createdTime", df.parse(startTime+" 00:00:00"), df.parse(endTime+" 23:59:59")));
-				dc.add(Restrictions.eq("jxsidString", tagency.getIdString()));
-				page.setPagebarsum(louPanService.pagecount(dc));
-			}
-		}
-		//当前页
-		String currentpage = request.getParameter("currentpage");
-		//操作
-		String handle = request.getParameter("handle");
-		if(currentpage==null || currentpage.equals("")){
-			//当前页为第一页
-			page.setCurrentpage(1);
-		}else {
-			page.setCurrentpage(Integer.parseInt(currentpage));
-		}
-		if(handle==null || handle.equals("")){
-			if(currentpage==null || currentpage.equals("")){
-				//当前页为第一页
-				page.setCurrentpage(1);
-			}else{	//当前页为第一页
-				page.setCurrentpage(Integer.parseInt(currentpage));
-			}
-			//当前页的操作
-		}else {
-			page.setHandle(handle);
-		}
-		if(page.getPagebarsum()==0){
-			page.setCurrentpage(0);
-			page.setStarlocal(0);
-			page.setPagebarsize(0);
-		}
-		if((page.getStarlocal()+page.getPagebarsize())>=page.getPagebarsum()){
-			DetachedCriteria dc = DetachedCriteria.forClass(TBuildings.class);
-			if(tagency==null){
-				if(startTime==null || endTime==null || startTime.equals("") || endTime.equals("")){
-					dc.add(Restrictions.eq("jxsidString",employee.getAngencyIdString()));
-				}else{
-					dc.add(Restrictions.between("createdTime", df.parse(startTime+" 00:00:00"), df.parse(endTime+" 23:59:59")));
-					dc.add(Restrictions.eq("jxsidString",employee.getAngencyIdString()));
-				}
-			}else{
-				if(startTime==null || endTime==null || startTime.equals("") || endTime.equals("")){
-					dc.add(Restrictions.eq("jxsidString",tagency.getIdString()));
-				}else{
-					dc.add(Restrictions.between("createdTime", df.parse(startTime+" 00:00:00"), df.parse(endTime+" 23:59:59")));
-					dc.add(Restrictions.eq("jxsidString",tagency.getIdString()));
-				}
-			}
-			loupanlist = louPanService.pagelist(dc,(page.getPagebarsum()-page.getPagebarsize()), page.getPagebarsize());
-			page.setStarlocal(page.getPagebarsum()-page.getPagebarsize());
-			request.setAttribute("pager", page);
-			return;
-		}else{
-			DetachedCriteria dc = DetachedCriteria.forClass(TBuildings.class);
-			if(tagency==null){
-				if(startTime==null || endTime==null || startTime.equals("") || endTime.equals("")){
-					dc.add(Restrictions.eq("jxsidString",employee.getAngencyIdString()));
-				}else{
-					dc.add(Restrictions.between("createdTime", df.parse(startTime+" 00:00:00"), df.parse(endTime+" 23:59:59")));
-					dc.add(Restrictions.eq("jxsidString",employee.getAngencyIdString()));
-				}
-			}else{
-				if(startTime==null || endTime==null || startTime.equals("") || endTime.equals("")){
-					dc.add(Restrictions.eq("jxsidString",tagency.getIdString()));
-				}else{
-					dc.add(Restrictions.between("createdTime", df.parse(startTime+" 00:00:00"), df.parse(endTime+" 23:59:59")));
-					dc.add(Restrictions.eq("jxsidString",tagency.getIdString()));
-				}
-			}
-			loupanlist = louPanService.pagelist(dc, page.getStarlocal(), page.getPagebarsize());
-			request.setAttribute("pager", page);
-		}
+		loupanlist = louPanService.loupanlist();
+		return "pageloupan";
 	}
 //	public String fileUpload() throws Exception {
 //		System.out.println("===========-------------");

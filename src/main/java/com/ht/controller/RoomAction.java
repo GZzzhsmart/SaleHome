@@ -190,10 +190,9 @@ public class RoomAction extends ActionSupport implements ServletRequestAware,Ser
 		return "showroom";
 	}
 	public String addroom() throws Exception{
-		System.out.println(room.getBuildingIdString()+"======");
 		room.setBuildingIdString(room.getBuildingIdString());
 		room.setHouseIdString(huxing.getIdString());
-		room.setSaleStatusInt(1);
+		room.setSaleStatusInt(0);
 		roomService.add(room);
 		logger.info("Ip为："+request.getRemoteAddr()+"的用户正在新增一个房号，当前时间为："+new Date().toLocaleString());
 		paginglist();
@@ -213,7 +212,7 @@ public class RoomAction extends ActionSupport implements ServletRequestAware,Ser
 		//实例化javabean，取参数
 		PagingBean page = new PagingBean();
 		//总记录条数，计算总页数
-		page.setPagebarsize(4);
+		page.setPagebarsize(10);
 		page.setPagebarsum(roomService.count("houseIdString",huxing.getIdString()));
 		//当前页
 		String currentpage = request.getParameter("currentpage");
@@ -241,19 +240,10 @@ public class RoomAction extends ActionSupport implements ServletRequestAware,Ser
 			page.setStarlocal(0);
 			page.setPagebarsize(0);
 		}
-		if((page.getStarlocal()+page.getPagebarsize())>=page.getPagebarsum()){
-			DetachedCriteria dc = DetachedCriteria.forClass(TRoom.class);
-			dc.add(Restrictions.eq("houseIdString", huxing.getIdString()));
-			roomlist = roomService.pagelist(dc,(page.getPagebarsum()-page.getPagebarsize()), page.getPagebarsize());
-			page.setStarlocal(page.getPagebarsum()-page.getPagebarsize());
-			request.setAttribute("pager", page);
-			return;
-		}else{
-			DetachedCriteria dc = DetachedCriteria.forClass(TRoom.class);
-			dc.add(Restrictions.eq("houseIdString", huxing .getIdString()));
-			roomlist = roomService.pagelist(dc, page.getStarlocal(), page.getPagebarsize());
-			request.setAttribute("pager", page);
-		}
+		DetachedCriteria dc = DetachedCriteria.forClass(TRoom.class);
+		dc.add(Restrictions.eq("houseIdString", huxing .getIdString()));
+		roomlist = roomService.pagelist(dc, page.getStarlocal(), page.getPagebarsize());
+		request.setAttribute("pager", page);
 	}
 	public void setServletResponse(HttpServletResponse response) {
 		this.response=response;

@@ -1,7 +1,8 @@
 package com.ht.dao.impl;
 
-import com.ht.dao.AppointmentDAO;
-import com.ht.pojo.TAppointment;
+import java.text.SimpleDateFormat;
+import java.util.List;
+
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -10,8 +11,8 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
-import java.text.SimpleDateFormat;
-import java.util.List;
+import com.ht.dao.AppointmentDAO;
+import com.ht.pojo.TAppointment;
 
 public class AppointmentDAOimpl implements AppointmentDAO{
 
@@ -24,7 +25,7 @@ public class AppointmentDAOimpl implements AppointmentDAO{
 		this.sessionFactory = sessionFactory;
 	}
 
-	
+	@Override
 	public TAppointment queryById(String id) {
 		Session session = sessionFactory.getCurrentSession();
 		return session.get(TAppointment.class, id);
@@ -43,14 +44,14 @@ public class AppointmentDAOimpl implements AppointmentDAO{
 		query.executeUpdate();
 	}
 
-	
+	@Override
 	public void add(TAppointment t) {
 		Session session = sessionFactory.getCurrentSession();
 		session.saveOrUpdate(t);
 		
 	}
 
-	
+	@Override
 	public int count(String column, String ifvalue) {
 		Session session = sessionFactory.getCurrentSession();
 		DetachedCriteria dc = DetachedCriteria.forClass(TAppointment.class);
@@ -60,13 +61,13 @@ public class AppointmentDAOimpl implements AppointmentDAO{
 		return Integer.parseInt(criteria.uniqueResult().toString());
 	}
 
-	
+	@Override
 	public void delete(TAppointment t) {
 		Session session = sessionFactory.getCurrentSession();
 		session.delete(t);
 	}
 
-	
+	@Override
 	public List<TAppointment> pagelist(DetachedCriteria dc, int startpage, int pagesize) {
 		Session session = sessionFactory.getCurrentSession();
 		Criteria criteria = dc.getExecutableCriteria(session);
@@ -76,7 +77,7 @@ public class AppointmentDAOimpl implements AppointmentDAO{
 	}
 
 	@SuppressWarnings("unchecked")
-	
+	@Override
 	public List<TAppointment> appointmentlist(String column, String ifvalue) {
 		Session session = sessionFactory.getCurrentSession();
 		DetachedCriteria dc = DetachedCriteria.forClass(TAppointment.class);
@@ -85,7 +86,7 @@ public class AppointmentDAOimpl implements AppointmentDAO{
 		return criteria.list();
 	}
 
-	
+	@Override
 	public void updatestatus(TAppointment t) {
 		Session session = sessionFactory.getCurrentSession();
 		Query<TAppointment> query = session.createQuery("update TAppointment t set t.appStatusInt ='"+t.getAppStatusInt()+"'  where t.idString ='"+t.getIdString()+"'");
@@ -93,7 +94,7 @@ public class AppointmentDAOimpl implements AppointmentDAO{
 		
 	}
 
-	
+	@Override
 	public void updateuserstatus(TAppointment t) {
 		Session session = sessionFactory.getCurrentSession();
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); 
@@ -102,7 +103,7 @@ public class AppointmentDAOimpl implements AppointmentDAO{
 		query.executeUpdate();
 	}
 
-	
+	@Override
 	public int buyhousecount(String userid, int appstatus) {
 		Session session = sessionFactory.getCurrentSession();
 		DetachedCriteria dc = DetachedCriteria.forClass(TAppointment.class);

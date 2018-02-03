@@ -1,8 +1,7 @@
 package com.ht.dao.impl;
 
-import com.ht.dao.SaleDAO;
-import com.ht.pojo.TBuildings;
-import com.ht.pojo.TSale;
+import java.util.List;
+
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -11,7 +10,11 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
-import java.util.List;
+import com.ht.dao.SaleDAO;
+import com.ht.pojo.TBuilding;
+import com.ht.pojo.TBuildings;
+import com.ht.pojo.THouse;
+import com.ht.pojo.TSale;
 
 public class SaleDAOimpl implements SaleDAO{
 
@@ -24,27 +27,27 @@ public class SaleDAOimpl implements SaleDAO{
 		this.sessionFactory = sessionFactory;
 	}
 
-	
+	@Override
 	public TSale queryById(String id) {
 		Session session = sessionFactory.getCurrentSession();
 		return session.get(TSale.class, id);
 	}
 
-	
+	@Override
 	public void update(TSale t) {
 		Session session = sessionFactory.getCurrentSession();
 		Query<TBuildings> query = session.createQuery("update TSale t set t.statusInt ="+t.getStatusInt()+"  where t.idString ='"+t.getIdString()+"'");
 		query.executeUpdate();
 	}
 
-	
+	@Override
 	public void add(TSale t) {
 		Session session = sessionFactory.getCurrentSession();
 		session.saveOrUpdate(t);
 		
 	}
 
-	
+	@Override
 	public int count(String column, String ifvalue) {
 		Session session = sessionFactory.getCurrentSession();
 		DetachedCriteria dc = DetachedCriteria.forClass(TSale.class);
@@ -54,13 +57,13 @@ public class SaleDAOimpl implements SaleDAO{
 		return Integer.parseInt(criteria.uniqueResult().toString());
 	}
 
-	
+	@Override
 	public void delete(TSale t) {
 		Session session = sessionFactory.getCurrentSession();
 		session.delete(t);
 	}
 
-	
+	@Override
 	public List<TSale> pagelist(DetachedCriteria dc, int startpage, int pagesize) {
 		Session session = sessionFactory.getCurrentSession();
 		Criteria criteria = dc.getExecutableCriteria(session);
@@ -68,7 +71,7 @@ public class SaleDAOimpl implements SaleDAO{
 		return list;
 	}
 
-	
+	@Override
 	public List<TSale> findsale(String column, String ifvalue) {
 		Session session = sessionFactory.getCurrentSession();
 		DetachedCriteria dc = DetachedCriteria.forClass(TSale.class);
@@ -78,14 +81,14 @@ public class SaleDAOimpl implements SaleDAO{
 		return list;
 	}
 
-	
+	@Override
 	public void shenhe(TSale t) {
 		Session session = sessionFactory.getCurrentSession();
 		Query<TBuildings> query = session.createQuery("update TSale t set t.saleHomeStatus ="+t.getSaleHomeStatus()+",t.reason ='"+t.getReason()+"'  where t.idString ='"+t.getIdString()+"'");
 		query.executeUpdate();
 	}
 
-	
+	@Override
 	public int count() {
 		Session session = sessionFactory.getCurrentSession();
 		DetachedCriteria dc = DetachedCriteria.forClass(TSale.class);
@@ -93,7 +96,7 @@ public class SaleDAOimpl implements SaleDAO{
 		return criteria.list().size();
 	}
 
-	
+	@Override
 	public List<TSale> baobiaolist() {
 		Session session = sessionFactory.getCurrentSession();
 		String sql = "select t.nameString,";

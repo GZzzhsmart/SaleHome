@@ -1,22 +1,24 @@
 package com.ht.controller;
 
+import java.io.PrintWriter;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.struts2.interceptor.ServletRequestAware;
+import org.apache.struts2.interceptor.ServletResponseAware;
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Restrictions;
+
 import com.alibaba.fastjson.JSON;
 import com.ht.pojo.PagingBean;
 import com.ht.pojo.TGetPrize;
 import com.ht.pojo.TUser;
 import com.ht.service.GetPrizeService;
 import com.opensymphony.xwork2.ActionSupport;
-import org.apache.struts2.interceptor.ServletRequestAware;
-import org.apache.struts2.interceptor.ServletResponseAware;
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Restrictions;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import java.io.PrintWriter;
-import java.util.Date;
-import java.util.List;
 
 public class GetPrizeAction extends ActionSupport implements ServletResponseAware,ServletRequestAware{
 
@@ -103,7 +105,7 @@ public class GetPrizeAction extends ActionSupport implements ServletResponseAwar
 		//实例化javabean，取参数
 		PagingBean page = new PagingBean();
 		//总记录条数，计算总页数
-		page.setPagebarsize(4);
+		page.setPagebarsize(10);
 		page.setPagebarsum(getPrizeService.count("useridString",t.getPhoneString()));
 		//当前页
 		String currentpage = request.getParameter("currentpage");
@@ -117,8 +119,11 @@ public class GetPrizeAction extends ActionSupport implements ServletResponseAwar
 		}
 		if(handle==null || handle.equals("")){
 			if(currentpage==null || currentpage.equals("")){
-				//当前页为第一页
-				page.setCurrentpage(1);
+				if(currentpage==null || currentpage.equals("")){
+					page.setCurrentpage(1);
+				}else{	
+					page.setCurrentpage(Integer.parseInt(currentpage));
+				}
 			}else{	//当前页为第一页
 				page.setCurrentpage(Integer.parseInt(currentpage));
 			}
@@ -131,19 +136,10 @@ public class GetPrizeAction extends ActionSupport implements ServletResponseAwar
 			page.setStarlocal(0);
 			page.setPagebarsize(0);
 		}
-		if((page.getStarlocal()+page.getPagebarsize())>=page.getPagebarsum()){
-			DetachedCriteria dc = DetachedCriteria.forClass(TGetPrize.class);
-			dc.add(Restrictions.eq("useridString",t.getPhoneString()));
-			getprizelist = getPrizeService.pagelist(dc,(page.getPagebarsum()-page.getPagebarsize()), page.getPagebarsize());
-			page.setStarlocal(page.getPagebarsum()-page.getPagebarsize());
-			request.setAttribute("pager", page);
-			return;
-		}else{
-			DetachedCriteria dc = DetachedCriteria.forClass(TGetPrize.class);
-			dc.add(Restrictions.eq("useridString",t.getPhoneString()));
-			getprizelist = getPrizeService.pagelist(dc, page.getStarlocal(), page.getPagebarsize());
-			request.setAttribute("pager", page);
-		}
+		DetachedCriteria dc = DetachedCriteria.forClass(TGetPrize.class);
+		dc.add(Restrictions.eq("useridString",t.getPhoneString()));
+		getprizelist = getPrizeService.pagelist(dc, page.getStarlocal(), page.getPagebarsize());
+		request.setAttribute("pager", page);
 	}
 	public void pagingcustomerlist() throws Exception {
 		//实例化javabean，取参数
@@ -191,11 +187,13 @@ public class GetPrizeAction extends ActionSupport implements ServletResponseAwar
 			request.setAttribute("pager", page);
 		}
 	}
+	@Override
 	public void setServletRequest(HttpServletRequest request) {
 		this.request=request;
 		
 	}
 
+	@Override
 	public void setServletResponse(HttpServletResponse response) {
 		this.response=response;
 		

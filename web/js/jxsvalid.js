@@ -51,7 +51,12 @@ function checktel(name){
 		document.getElementById('tel').style.display='block';
 		$("#tel").text("楼盘售楼电话不能为空");
 	}else if(name!=''){
-		document.getElementById('tel').style.display='none';
+		if(name.length!=11){
+			document.getElementById('tel').style.display='block';
+			$("#tel").text("请输入正确的售楼热线");
+		}else{
+			document.getElementById('tel').style.display='none';
+		}
 	}
 }
 function checkreception(name){
@@ -120,19 +125,12 @@ function checktotal(name){
 }
 function checkvalid(){
 	var checkorder=false;
-	if($("#Map_input_callback").val()==""){
-		layer.msg('楼盘地址不能为空!', {
-			icon : 5,
-			time : 2000
-		});
+	if($("#loupan_logo").val()==''){
+		document.getElementById('filename').style.display='block';
+		$("#filename").text("楼盘logo不能为空");
 		checkorder=false;
-	}
-	if($("#loupan_logo").val()==""){
-		layer.msg('楼盘logo不能为空!', {
-			icon : 5,
-			time : 2000
-		});
-		checkorder=false;
+	}else if($("#loupan_logo").val()!=''){
+		document.getElementById('filename').style.display='none';
 	}
 	if($("#loupan_nameString").val()==''){
 		document.getElementById('nameString').style.display='block';
@@ -140,7 +138,6 @@ function checkvalid(){
 		checkorder=false;
 	}else if($("#loupan_nameString").val()!=''){
 		document.getElementById('nameString').style.display='none';
-		checkorder=true;
 	}
 	if($("#loupan_totalRoomsInt").val()==''){
 		document.getElementById('total').style.display='block';
@@ -148,7 +145,6 @@ function checkvalid(){
 		checkorder=false;
 	}else if($("#loupan_totalRoomsInt").val()!=''){
 		document.getElementById('total').style.display='none';
-		checkorder=true;
 	}
 	if($("#loupan_floorAreaString").val()==''){
 		document.getElementById('floor').style.display='block';
@@ -156,7 +152,6 @@ function checkvalid(){
 		checkorder=false;
 	}else if($("#loupan_floorAreaString").val()!=''){
 		document.getElementById('floor').style.display='none';
-		checkorder=true;
 	}
 	if($("#loupan_buildingAreaString").val()==''){
 		document.getElementById('build').style.display='block';
@@ -164,7 +159,6 @@ function checkvalid(){
 		checkorder=false;
 	}else if($("#loupan_buildingAreaString").val()!=''){
 		document.getElementById('build').style.display='none';
-		checkorder=true;
 	}
 	if($("#city").val()==''){
 		document.getElementById('area').style.display='block';
@@ -172,7 +166,6 @@ function checkvalid(){
 		checkorder=false;
 	}else if($("#city").val()!=''){
 		document.getElementById('area').style.display='none';
-		checkorder=true;
 	}
 	if($("#loupan_avgPriceDouble").val()==''){
 		document.getElementById('price').style.display='block';
@@ -180,15 +173,19 @@ function checkvalid(){
 		checkorder=false;
 	}else if($("#loupan_avgPriceDouble").val()!=''){
 		document.getElementById('price').style.display='none';
-		checkorder=true;
 	}
 	if($("#loupan_telString").val()==''){
 		document.getElementById('tel').style.display='block';
 		$("#tel").text("楼盘售楼电话不能为空");
 		checkorder=false;
 	}else if($("#loupan_telString").val()!=''){
-		document.getElementById('tel').style.display='none';
-		checkorder=true;
+		if($("#loupan_telString").val().length!=11){
+			document.getElementById('tel').style.display='block';
+			$("#tel").text("请输入正确的售楼电话");
+			checkorder=false;
+		}else{
+			document.getElementById('tel').style.display='none';
+		}
 	}
 	if($("#loupan_receptionAddressString").val()==''){
 		document.getElementById('reception').style.display='block';
@@ -196,7 +193,6 @@ function checkvalid(){
 		checkorder=false;
 	}else if($("#loupan_receptionAddressString").val()!=''){
 		document.getElementById('reception').style.display='none';
-		checkorder=true;
 	}
 	if($("#loupan_propertyFeeDouble").val()==''){
 		document.getElementById('fee').style.display='block';
@@ -204,7 +200,6 @@ function checkvalid(){
 		checkorder=false;
 	}else if($("#loupan_propertyFeeDouble").val()!=''){
 		document.getElementById('fee').style.display='none';
-		checkorder=true;
 	}
 	if($("#loupan_propertyCompany").val()==''){
 		document.getElementById('company').style.display='block';
@@ -212,7 +207,6 @@ function checkvalid(){
 		checkorder=false;
 	}else if($("#loupan_propertyCompany").val()!=''){
 		document.getElementById('company').style.display='none';
-		checkorder=true;
 	}
 	if($("#loupan_carStationInt").val()==''){
 		document.getElementById('car').style.display='block';
@@ -220,7 +214,6 @@ function checkvalid(){
 		checkorder=false;
 	}else if($("#loupan_carStationInt").val()!=''){
 		document.getElementById('car').style.display='none';
-		checkorder=true;
 	}
 	if($("#loupan_trafficString").val()==''){
 		document.getElementById('traffic').style.display='block';
@@ -228,7 +221,6 @@ function checkvalid(){
 		checkorder=false;
 	}else if($("#loupan_trafficString").val()!=''){
 		document.getElementById('traffic').style.display='none';
-		checkorder=true;
 	}
 	if($("#loupan_equipmentsString").val()==''){
 		document.getElementById('equipments').style.display='block';
@@ -236,7 +228,6 @@ function checkvalid(){
 		checkorder=false;
 	}else if($("#loupan_equipmentsString").val()!=''){
 		document.getElementById('equipments').style.display='none';
-		checkorder=true;
 	}
 	if($("#loupan_introString").val()==''){
 		document.getElementById('info').style.display='block';
@@ -246,13 +237,4 @@ function checkvalid(){
 		document.getElementById('info').style.display='none';
 		checkorder=true;
 	}
-	if($("#loupan_logo").val()==''){
-		document.getElementById('filename').style.display='block';
-		$("#filename").text("楼盘logo不能为空");
-		checkorder=false;
-	}else if($("#loupan_logo").val()!=''){
-		document.getElementById('filename').style.display='none';
-		checkorder=true;
-	}
-	return checkorder;
 }

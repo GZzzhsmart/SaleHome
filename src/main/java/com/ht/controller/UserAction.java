@@ -1,5 +1,20 @@
 package com.ht.controller;
 
+import java.io.File;
+import java.io.PrintWriter;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Logger;
+import org.apache.struts2.interceptor.ServletRequestAware;
+import org.apache.struts2.interceptor.ServletResponseAware;
+import org.hibernate.criterion.DetachedCriteria;
+
 import com.alibaba.fastjson.JSON;
 import com.ht.pluspassword.AesUtils;
 import com.ht.pojo.PagingBean;
@@ -8,19 +23,9 @@ import com.ht.pojo.TUser;
 import com.ht.service.TAgencyService;
 import com.ht.service.UserService;
 import com.opensymphony.xwork2.ActionSupport;
-import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
-import org.apache.struts2.interceptor.ServletRequestAware;
-import org.apache.struts2.interceptor.ServletResponseAware;
-import org.hibernate.criterion.DetachedCriteria;
+import com.sun.org.apache.xml.internal.resolver.helpers.PublicId;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import java.io.File;
-import java.io.PrintWriter;
-import java.util.Date;
-import java.util.List;
+import sun.tools.jar.resources.jar;
 
 public class UserAction extends ActionSupport implements ServletRequestAware,ServletResponseAware{
 
@@ -260,7 +265,6 @@ public class UserAction extends ActionSupport implements ServletRequestAware,Ser
 		}
 	}
 	public  String ruzhu() throws Exception{
-		
 		HttpSession session = request.getSession();
 		TUser t = (TUser)session.getAttribute("user");
 		List<TAgency> li = tAgencyService.tagencylist("useridString", t.getIdString());
@@ -289,7 +293,7 @@ public class UserAction extends ActionSupport implements ServletRequestAware,Ser
 		tagency.setPwdString(t.getPwdString());
 		tagency.setCreatedTime(new Date());
 		tagency.setCheckedStatusInt(0);
-		tagency.setStatusInt(1);
+		tagency.setStatusInt(0);
 		tagency.setReasonString("请求审核");
 		tagency.setUseridString(t.getIdString());
 		tAgencyService.add(tagency);
@@ -317,8 +321,11 @@ public class UserAction extends ActionSupport implements ServletRequestAware,Ser
 			page.setCurrentpage(Integer.parseInt(currentpage));
 		}
 		if(handle==null || handle.equals("")){
-			page.setHandle("firstpage");
-			//当前页的操作
+			if(currentpage==null || currentpage.equals("")){
+				page.setCurrentpage(1);
+			}else{	
+				page.setCurrentpage(Integer.parseInt(currentpage));
+			}
 		}else {
 			page.setHandle(handle);
 		}
@@ -327,22 +334,9 @@ public class UserAction extends ActionSupport implements ServletRequestAware,Ser
 			page.setStarlocal(0);
 			page.setPagebarsize(0);
 		}
-		if((page.getStarlocal()+page.getPagebarsize())>=page.getPagebarsum()){
-			DetachedCriteria dc = DetachedCriteria.forClass(TUser.class);
-			userlist = userService.pagelist(dc,(page.getPagebarsum()-page.getPagebarsize()), page.getPagebarsize());
-			if((page.getPagebarsum()-page.getPagebarsize())<0){
-				page.setStarlocal(0);
-			}else{
-				page.setStarlocal(page.getPagebarsum()-page.getPagebarsize());
-			}
-			request.setAttribute("pager", page);
-			return;
-		}else{
-			DetachedCriteria dc = DetachedCriteria.forClass(TUser.class);
-			userlist = userService.pagelist(dc, page.getStarlocal(), page.getPagebarsize());
-			request.setAttribute("pager", page);
-		}
-
+		DetachedCriteria dc = DetachedCriteria.forClass(TUser.class);
+		userlist = userService.pagelist(dc, page.getStarlocal(), page.getPagebarsize());
+		request.setAttribute("pager", page);
 	}
 	public void setServletResponse(HttpServletResponse response) {
 		this.response=response;

@@ -1,5 +1,16 @@
 package com.ht.controller;
 
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.struts2.interceptor.ServletRequestAware;
+import org.apache.struts2.interceptor.ServletResponseAware;
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Restrictions;
+
 import com.ht.pojo.TActivity;
 import com.ht.pojo.TArticle;
 import com.ht.pojo.TPage;
@@ -8,15 +19,6 @@ import com.ht.service.ActivityService;
 import com.ht.service.ArticleService;
 import com.ht.service.PageService;
 import com.opensymphony.xwork2.ActionSupport;
-import org.apache.struts2.interceptor.ServletRequestAware;
-import org.apache.struts2.interceptor.ServletResponseAware;
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Restrictions;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import java.util.List;
 
 public class PageAction  extends ActionSupport implements ServletRequestAware,ServletResponseAware{
 
@@ -94,17 +96,16 @@ public class PageAction  extends ActionSupport implements ServletRequestAware,Se
 		return "afterpage";
 	}
 	public String showpage() throws Exception{
-		System.out.println(page.getUseridString());
 		List<TPage> list = pageService.findpage("useridString", page.getUseridString());
 		page = list.get(0);
 		return "showpage";
 	}
-
+	@Override
 	public void setServletResponse(HttpServletResponse response) {
 		this.response=response;
 		
 	}
-
+	@Override
 	public void setServletRequest(HttpServletRequest request) {
 		this.reques=request;
 		

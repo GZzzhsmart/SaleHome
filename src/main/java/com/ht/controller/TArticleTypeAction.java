@@ -1,18 +1,25 @@
 package com.ht.controller;
 
-import com.ht.pojo.PagingBean;
-import com.ht.pojo.TArticleType;
-import com.ht.service.TArticleTypeService;
-import com.opensymphony.xwork2.ActionSupport;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import org.apache.log4j.Logger;
 import org.apache.struts2.interceptor.ServletRequestAware;
 import org.apache.struts2.interceptor.ServletResponseAware;
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.id.SequenceIdentityGenerator.Delegate;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.Date;
-import java.util.List;
+import com.ht.pojo.PagingBean;
+import com.ht.pojo.TAgency;
+import com.ht.pojo.TArticle;
+import com.ht.pojo.TArticleType;
+import com.ht.pojo.TEmployee;
+import com.ht.service.TArticleTypeService;
+import com.opensymphony.xwork2.ActionSupport;
 
 public class TArticleTypeAction extends ActionSupport implements ServletRequestAware,ServletResponseAware{
 
@@ -78,7 +85,7 @@ public class TArticleTypeAction extends ActionSupport implements ServletRequestA
 	}
 	public void paginglist() throws Exception {
 		PagingBean page = new PagingBean();
-		page.setPagebarsize(4);
+		page.setPagebarsize(10);
 		page.setPagebarsum(tArticleTypeService.count("",""));
 		String currentpage = request.getParameter("currentpage");
 		//操作
@@ -105,17 +112,9 @@ public class TArticleTypeAction extends ActionSupport implements ServletRequestA
 			page.setStarlocal(0);
 			page.setPagebarsize(0);
 		}
-		if((page.getStarlocal()+page.getPagebarsize())>=page.getPagebarsum()){
-			DetachedCriteria dc = DetachedCriteria.forClass(TArticleType.class);
-			tArticleTypelist = tArticleTypeService.pagelist(dc,(page.getPagebarsum()-page.getPagebarsize()), page.getPagebarsize());
-			page.setStarlocal(page.getPagebarsum()-page.getPagebarsize());
-			request.setAttribute("pager", page);
-			return;
-		}else{
-			DetachedCriteria dc = DetachedCriteria.forClass(TArticleType.class);
-			tArticleTypelist = tArticleTypeService.pagelist(dc, page.getStarlocal(), page.getPagebarsize());
-			request.setAttribute("pager", page);
-		}
+		DetachedCriteria dc = DetachedCriteria.forClass(TArticleType.class);
+		tArticleTypelist = tArticleTypeService.pagelist(dc, page.getStarlocal(), page.getPagebarsize());
+		request.setAttribute("pager", page);
 	}
 	public String deletearticletype() throws Exception{
 		tArticleTypeService.delete(tArticleType);
@@ -132,12 +131,12 @@ public class TArticleTypeAction extends ActionSupport implements ServletRequestA
 		paginglist();
 		return "deletemanyarticletype";
 	}
-
+	@Override
 	public void setServletResponse(HttpServletResponse response) {
 		this.response=response;
 	}
 
-
+	@Override
 	public void setServletRequest(HttpServletRequest request) {
 		this.request=request;
 			

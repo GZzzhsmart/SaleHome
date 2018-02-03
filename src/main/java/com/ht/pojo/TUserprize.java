@@ -20,18 +20,20 @@ public class TUserprize implements java.io.Serializable {
 	private double prize;
 	private String employeeidString;
 	private TEmployee employee;
-	private TUser user;
+	private TCustomer customer;
 	public TEmployee getEmployee() {
 		return employee;
 	}
 	public void setEmployee(TEmployee employee) {
 		this.employee = employee;
 	}
-	public TUser getUser() {
-		return user;
+	
+	
+	public TCustomer getCustomer() {
+		return customer;
 	}
-	public void setUser(TUser user) {
-		this.user = user;
+	public void setCustomer(TCustomer customer) {
+		this.customer = customer;
 	}
 	public String getIdString() {
 		return idString;

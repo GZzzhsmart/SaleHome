@@ -6,5 +6,5 @@ import com.ht.pojo.TMessage;
 
 public interface MessageDAO extends BaseDAO<String, TMessage>{
 
-	public abstract List<TMessage> findmessage(String column, String ifvlue);
+	public abstract List<TMessage> findmessage(String column,String ifvlue);
 }

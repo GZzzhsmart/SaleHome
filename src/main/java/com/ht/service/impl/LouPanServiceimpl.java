@@ -1,11 +1,12 @@
 package com.ht.service.impl;
 
+import java.util.List;
+
+import org.hibernate.criterion.DetachedCriteria;
+
 import com.ht.dao.LouPanDAO;
 import com.ht.pojo.TBuildings;
 import com.ht.service.LouPanService;
-import org.hibernate.criterion.DetachedCriteria;
-
-import java.util.List;
 
 public class LouPanServiceimpl implements LouPanService{
 
@@ -61,37 +62,37 @@ public class LouPanServiceimpl implements LouPanService{
 		return louPanDAO.pagelist(dc, startpage, pagesize);
 	}
 
-	
+	@Override
 	public int count() {
 		return louPanDAO.count();
 	}
 
-	
+	@Override
 	public List<TBuildings> likebuildings(String column, String ifvalue,int startpage,int pagesize) {
 		return louPanDAO.likebuildings(column, ifvalue,startpage,pagesize);
 	}
 
-	
+	@Override
 	public int likecount(String column, String ifvalue) {
 		return louPanDAO.likecount(column, ifvalue);
 	}
 
-	
+	@Override
 	public List<TBuildings> likebuildings(String column, String ifvalue) {
 		return louPanDAO.likebuildings(column, ifvalue);
 	}
 
-	
+	@Override
 	public List<TBuildings> baobiao() {
 		return louPanDAO.baobiao();
 	}
 
-	
+	@Override
 	public List<TBuildings> loupanlist() {
 		return louPanDAO.loupanlist();
 	}
 
-	
+	@Override
 	public int pagecount(DetachedCriteria dc) {
 		return louPanDAO.pagecount(dc);
 	}

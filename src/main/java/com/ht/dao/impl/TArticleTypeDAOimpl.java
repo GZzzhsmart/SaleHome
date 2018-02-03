@@ -1,14 +1,17 @@
 package com.ht.dao.impl;
 
-import com.ht.dao.TArticleTypeDAO;
-import com.ht.pojo.TArticleType;
+import java.util.List;
+
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 
-import java.util.List;
+import com.ht.dao.TArticleTypeDAO;
+import com.ht.pojo.TArticleType;
+import com.ht.pojo.TEmployee;
 
 public class TArticleTypeDAOimpl implements TArticleTypeDAO{
 
@@ -22,27 +25,27 @@ public class TArticleTypeDAOimpl implements TArticleTypeDAO{
 		this.sessionFactory = sessionFactory;
 	}
 
-	
+	@Override
 	public TArticleType queryById(String id) {
 		Session session = sessionFactory.getCurrentSession();
 		return session.get(TArticleType.class, id);
 	}
 
-	
+	@Override
 	public void update(TArticleType t) {
 		Session session = sessionFactory.getCurrentSession();
 		session.saveOrUpdate(t);
 		
 	}
 
-	
+	@Override
 	public void add(TArticleType t) {
 		Session session = sessionFactory.getCurrentSession();
 		session.saveOrUpdate(t);
 		
 	}
 
-	
+	@Override
 	public int count(String column, String ifvalue) {
 		Session session = sessionFactory.getCurrentSession();
 		DetachedCriteria dc = DetachedCriteria.forClass(TArticleType.class);
@@ -51,14 +54,14 @@ public class TArticleTypeDAOimpl implements TArticleTypeDAO{
 		return Integer.parseInt(criteria.uniqueResult().toString());
 	}
 
-	
+	@Override
 	public void delete(TArticleType t) {
 		Session session =sessionFactory.getCurrentSession();
 		session.delete(t);
 		
 	}
 
-	
+	@Override
 	public List<TArticleType> pagelist(DetachedCriteria dc, int startpage, int pagesize) {
 		Session session = sessionFactory.getCurrentSession();
 		Criteria criteria = dc.getExecutableCriteria(session);
@@ -66,7 +69,7 @@ public class TArticleTypeDAOimpl implements TArticleTypeDAO{
 		return list;
 	}
 
-	
+	@Override
 	public List<TArticleType> findtype() {
 		Session session = sessionFactory.getCurrentSession();
 		DetachedCriteria dc = DetachedCriteria.forClass(TArticleType.class);

@@ -225,7 +225,7 @@ public class HouseAction extends ActionSupport implements ServletRequestAware,Se
 		logger.info("Ip为："+request.getRemoteAddr()+"的用户正在新增户型上传了一张名为"+newname+"的图片，当前时间为："+new Date().toLocaleString());
 		house.setLogoString("upfile/"+newname);
 		FileUtils.copyFile(file, new File(filepath,newname));
-		house.setStatusInt(1);
+		house.setStatusInt(0);
 		house.setCreatedTime(new Date());
 		house.setJxsidString(tagency.getIdString());
 		houseService.add(house);
@@ -265,7 +265,7 @@ public class HouseAction extends ActionSupport implements ServletRequestAware,Se
 		//实例化javabean，取参数
 		PagingBean page = new PagingBean();
 		//总记录条数，计算总页数
-		page.setPagebarsize(4);
+		page.setPagebarsize(10);
 		if(startTime==null || endTime==null || startTime.equals("") || endTime.equals("")){
 			page.setPagebarsum(houseService.count("buildidString",tbuilding.getIdString()));
 		}else{
@@ -285,8 +285,11 @@ public class HouseAction extends ActionSupport implements ServletRequestAware,Se
 			page.setCurrentpage(Integer.parseInt(currentpage));
 		}
 		if(handle==null || handle.equals("")){
-			page.setHandle("firstpage");
-			//当前页的操作
+			if(currentpage==null || currentpage.equals("")){
+				page.setCurrentpage(1);
+			}else{	
+				page.setCurrentpage(Integer.parseInt(currentpage));
+			}
 		}else {
 			page.setHandle(handle);
 		}
@@ -295,35 +298,16 @@ public class HouseAction extends ActionSupport implements ServletRequestAware,Se
 			page.setStarlocal(0);
 			page.setPagebarsize(0);
 		}
-		if((page.getStarlocal()+page.getPagebarsize())>=page.getPagebarsum()){
-			DetachedCriteria dc = DetachedCriteria.forClass(THouse.class);
-			if(startTime==null || endTime==null || startTime.equals("") || endTime.equals("")){
-				dc.add(Restrictions.eq("buildidString", tbuilding.getIdString()));
-			}else{
-				dc.add(Restrictions.eq("buildidString", tbuilding.getIdString()));
-				dc.add(Restrictions.between("createdTime", df.parse(startTime+" 00:00:00"), df.parseObject(endTime+" 23:59:59")));
-			}
-			houselist = houseService.pagelist(dc,(page.getPagebarsum()-page.getPagebarsize()), page.getPagebarsize());
-			if((page.getPagebarsum()-page.getPagebarsize())<0){
-				page.setStarlocal(0);
-			}else{
-				page.setStarlocal(page.getPagebarsum()-page.getPagebarsize());
-			}
-			request.setAttribute("pager", page);
-			tbuilding.setIdString(tbuilding.getIdString());
+		DetachedCriteria dc = DetachedCriteria.forClass(THouse.class);
+		if(startTime==null || endTime==null || startTime.equals("") || endTime.equals("")){
+			dc.add(Restrictions.eq("buildidString", tbuilding.getIdString()));
 		}else{
-			DetachedCriteria dc = DetachedCriteria.forClass(THouse.class);
-			if(startTime==null || endTime==null || startTime.equals("") || endTime.equals("")){
-				dc.add(Restrictions.eq("buildidString", tbuilding.getIdString()));
-			}else{
-				dc.add(Restrictions.eq("buildidString", tbuilding.getIdString()));
-				dc.add(Restrictions.between("createdTime", df.parse(startTime+" 00:00:00"), df.parseObject(endTime+" 23:59:59")));
-			}
-			houselist = houseService.pagelist(dc, page.getStarlocal(), page.getPagebarsize());
-			tbuilding.setIdString(tbuilding.getIdString());
-			request.setAttribute("pager", page);
+			dc.add(Restrictions.eq("buildidString", tbuilding.getIdString()));
+			dc.add(Restrictions.between("createdTime", df.parse(startTime+" 00:00:00"), df.parseObject(endTime+" 23:59:59")));
 		}
-
+		houselist = houseService.pagelist(dc, page.getStarlocal(), page.getPagebarsize());
+		tbuilding.setIdString(tbuilding.getIdString());
+		request.setAttribute("pager", page);
 	}
 	
 	public void setServletResponse(HttpServletResponse response) {

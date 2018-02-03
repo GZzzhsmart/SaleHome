@@ -1,11 +1,12 @@
 package com.ht.service.impl;
 
+import java.util.List;
+
+import org.hibernate.criterion.DetachedCriteria;
+
 import com.ht.dao.UserPrizeDAO;
 import com.ht.pojo.TUserprize;
 import com.ht.service.UserPrizeService;
-import org.hibernate.criterion.DetachedCriteria;
-
-import java.util.List;
 
 public class UserPrizeServiceimpl implements UserPrizeService{
 
@@ -18,44 +19,44 @@ public class UserPrizeServiceimpl implements UserPrizeService{
 		this.userPrizeDAO = userPrizeDAO;
 	}
 
-	
+	@Override
 	public TUserprize queryById(String id) {
 		return userPrizeDAO.queryById(id);
 	}
 
-	
+	@Override
 	public void update(TUserprize t) {
 		userPrizeDAO.update(t);
 	}
 
-	
+	@Override
 	public void add(TUserprize t) {
 		userPrizeDAO.add(t);
 		
 	}
 
-	
+	@Override
 	public int count(String column, String ifvalue) {
 		return userPrizeDAO.count(column, ifvalue);
 	}
 
-	
+	@Override
 	public void delete(TUserprize t) {
 		userPrizeDAO.delete(t);
 		
 	}
 
-	
+	@Override
 	public List<TUserprize> pagelist(DetachedCriteria dc, int startpage, int pagesize) {
 		return userPrizeDAO.pagelist(dc, startpage, pagesize);
 	}
 
-	
+	@Override
 	public List<TUserprize> finduserprize(String column, String ifvalue) {
 		return userPrizeDAO.finduserprize(column, ifvalue);
 	}
 
-	
+	@Override
 	public double salary(String employeeid) {
 		return userPrizeDAO.salary(employeeid);
 	}

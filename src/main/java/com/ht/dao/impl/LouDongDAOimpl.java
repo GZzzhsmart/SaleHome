@@ -1,8 +1,7 @@
 package com.ht.dao.impl;
 
-import com.ht.dao.LouDongDAO;
-import com.ht.pojo.TBuilding;
-import com.ht.pojo.TBuildings;
+import java.util.List;
+
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -11,7 +10,9 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
-import java.util.List;
+import com.ht.dao.LouDongDAO;
+import com.ht.pojo.TBuilding;
+import com.ht.pojo.TBuildings;
 
 public class LouDongDAOimpl implements LouDongDAO{
 
@@ -99,7 +100,7 @@ public class LouDongDAOimpl implements LouDongDAO{
 		return list;
 	}
 
-	
+	@Override
 	public int pagecount(DetachedCriteria dc) {
 		Session session = sessionFactory.getCurrentSession();
 		dc.setProjection(Projections.rowCount());

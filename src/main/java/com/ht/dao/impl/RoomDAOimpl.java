@@ -1,10 +1,7 @@
 package com.ht.dao.impl;
 
-import com.ht.dao.RoomDAO;
-import com.ht.pojo.TBuilding;
-import com.ht.pojo.TBuildings;
-import com.ht.pojo.THouse;
-import com.ht.pojo.TRoom;
+import java.util.List;
+
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -13,7 +10,11 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
-import java.util.List;
+import com.ht.dao.RoomDAO;
+import com.ht.pojo.TBuilding;
+import com.ht.pojo.TBuildings;
+import com.ht.pojo.THouse;
+import com.ht.pojo.TRoom;
 
 public class RoomDAOimpl implements RoomDAO{
 
@@ -98,10 +99,11 @@ public class RoomDAOimpl implements RoomDAO{
 		return list;
 	}
 
-	
+	@Override
 	public List<TRoom> roomlist() {
 		Session session = sessionFactory.getCurrentSession();
 		DetachedCriteria dc = DetachedCriteria.forClass(TRoom.class);
+		dc.add(Restrictions.eq("saleStatusInt", 0));
 		Criteria criteria = dc.getExecutableCriteria(session);
 		List<TRoom> list = criteria.list();
 		return list;

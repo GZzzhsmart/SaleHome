@@ -25,8 +25,6 @@ public class PagingBean implements Serializable{
 		if((starlocal+pagebarsize)>=pagebarsum){
 			if(pagebarsum-pagebarsize<0){
 				starlocal=0;
-			}else{
-				starlocal = pagebarsum-pagebarsize;
 			}
 		}
 		return starlocal;

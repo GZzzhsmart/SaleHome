@@ -1,9 +1,7 @@
 package com.ht.dao.impl;
 
-import com.ht.dao.HouseDAO;
-import com.ht.pojo.TBuilding;
-import com.ht.pojo.TBuildings;
-import com.ht.pojo.THouse;
+import java.util.List;
+
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -12,7 +10,10 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
-import java.util.List;
+import com.ht.dao.HouseDAO;
+import com.ht.pojo.TBuilding;
+import com.ht.pojo.TBuildings;
+import com.ht.pojo.THouse;
 
 public class HouseDAOimpl implements HouseDAO{
 
@@ -85,7 +86,7 @@ public class HouseDAOimpl implements HouseDAO{
 		List<THouse> list = criteria.list();
 		return list;
 	}
-	
+	@Override
 	public int pagecount(DetachedCriteria dc) {
 		Session session = sessionFactory.getCurrentSession();
 		dc.setProjection(Projections.rowCount());

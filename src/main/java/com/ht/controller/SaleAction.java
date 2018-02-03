@@ -14,10 +14,12 @@ import org.apache.commons.io.FileUtils;
 import org.apache.struts2.interceptor.ServletRequestAware;
 import org.apache.struts2.interceptor.ServletResponseAware;
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
 import com.alibaba.fastjson.JSON;
 import com.ht.pojo.PagingBean;
+import com.ht.pojo.TAppointment;
 import com.ht.pojo.TBaobiao;
 import com.ht.pojo.TCustomer;
 import com.ht.pojo.TEmployee;
@@ -25,6 +27,7 @@ import com.ht.pojo.TMission;
 import com.ht.pojo.TRoom;
 import com.ht.pojo.TSale;
 import com.ht.pojo.TUserprize;
+import com.ht.service.AppointmentService;
 import com.ht.service.CustomerService;
 import com.ht.service.MissionService;
 import com.ht.service.RoomService;
@@ -56,6 +59,13 @@ public class SaleAction extends ActionSupport implements ServletRequestAware,Ser
 	private UserPrizeService userPrizeService;
 	private TRoom room;
 	private File file;
+	private AppointmentService appointmentService;
+	public AppointmentService getAppointmentService() {
+		return appointmentService;
+	}
+	public void setAppointmentService(AppointmentService appointmentService) {
+		this.appointmentService = appointmentService;
+	}
 	public File getFile() {
 		return file;
 	}
@@ -194,7 +204,7 @@ public class SaleAction extends ActionSupport implements ServletRequestAware,Ser
 		sale.setEmpIdString(employee.getIdString());
 		sale.setCreatedTime(new Date());
 		sale.setStatusInt(0);
-		sale.setSaleHomeStatus(1);
+		sale.setSaleHomeStatus(0);
 		sale.setReason("请求审核");
 		saleService.add(sale);
 		paginglist();
@@ -213,7 +223,7 @@ public class SaleAction extends ActionSupport implements ServletRequestAware,Ser
 			missionService.updatelastquentity(mission);
 			userprize = new TUserprize();
 			userprize.setCreateTime(new Date());
-			userprize.setPrize((10-sale.getDiscountDouble())*sale.getTotalCostDouble());
+			userprize.setPrize(sale.getDiscountDouble()*sale.getTotalCostDouble()/1000);
 			userprize.setUserIdString(sale.getCustomerIdString());
 			userprize.setEmployeeidString(sale.getEmpIdString());
 			userPrizeService.add(userprize);
@@ -225,6 +235,9 @@ public class SaleAction extends ActionSupport implements ServletRequestAware,Ser
 			room.setSaleStatusInt(1);
 			room.setIdString(sale.getRoomIdString());
 			roomService.update(room);
+//			TAppointment appointment = new TAppointment();
+//			appointment
+//			appointmentService.update(t);
 		}
 		pagingsalelist();
 		return "updatesale";
@@ -281,7 +294,7 @@ public class SaleAction extends ActionSupport implements ServletRequestAware,Ser
 		//实例化javabean，取参数
 		PagingBean page = new PagingBean();
 		//总记录条数，计算总页数
-		page.setPagebarsize(4);
+		page.setPagebarsize(10);
 		page.setPagebarsum(saleService.count("empIdString",t.getIdString()));
 		//当前页
 		String currentpage = request.getParameter("currentpage");
@@ -309,19 +322,10 @@ public class SaleAction extends ActionSupport implements ServletRequestAware,Ser
 			page.setStarlocal(0);
 			page.setPagebarsize(0);
 		}
-		if((page.getStarlocal()+page.getPagebarsize())>=page.getPagebarsum()){
-			DetachedCriteria dc = DetachedCriteria.forClass(TSale.class);
-			dc.add(Restrictions.eq("empIdString",t.getIdString()));
-			salelist = saleService.pagelist(dc,(page.getPagebarsum()-page.getPagebarsize()), page.getPagebarsize());
-			page.setStarlocal(page.getPagebarsum()-page.getPagebarsize());
-			request.setAttribute("pager", page);
-			return;
-		}else{
-			DetachedCriteria dc = DetachedCriteria.forClass(TSale.class);
-			dc.add(Restrictions.eq("empIdString",t.getIdString()));
-			salelist = saleService.pagelist(dc, page.getStarlocal(), page.getPagebarsize());
-			request.setAttribute("pager", page);
-		}
+		DetachedCriteria dc = DetachedCriteria.forClass(TSale.class);
+		dc.add(Restrictions.eq("empIdString",t.getIdString()));
+		salelist = saleService.pagelist(dc, page.getStarlocal(), page.getPagebarsize());
+		request.setAttribute("pager", page);
 	}
 	public void pagingsalelist() throws Exception {
 		HttpSession session = request.getSession();
@@ -329,7 +333,7 @@ public class SaleAction extends ActionSupport implements ServletRequestAware,Ser
 		//实例化javabean，取参数
 		PagingBean page = new PagingBean();
 		//总记录条数，计算总页数
-		page.setPagebarsize(4);
+		page.setPagebarsize(10);
 		page.setPagebarsum(saleService.count());
 		//当前页
 		String currentpage = request.getParameter("currentpage");
@@ -357,25 +361,18 @@ public class SaleAction extends ActionSupport implements ServletRequestAware,Ser
 			page.setStarlocal(0);
 			page.setPagebarsize(0);
 		}
-		if((page.getStarlocal()+page.getPagebarsize())>=page.getPagebarsum()){
-			DetachedCriteria dc = DetachedCriteria.forClass(TSale.class);
-			salelist = saleService.pagelist(dc,(page.getPagebarsum()-page.getPagebarsize()), page.getPagebarsize());
-			page.setStarlocal(page.getPagebarsum()-page.getPagebarsize());
-			request.setAttribute("pager", page);
-			return;
-		}else{
-			DetachedCriteria dc = DetachedCriteria.forClass(TSale.class);
-			salelist = saleService.pagelist(dc, page.getStarlocal(), page.getPagebarsize());
-			request.setAttribute("pager", page);
-		}
+		DetachedCriteria dc = DetachedCriteria.forClass(TSale.class);
+		dc.addOrder(Order.desc("createdTime"));
+		salelist = saleService.pagelist(dc, page.getStarlocal(), page.getPagebarsize());
+		request.setAttribute("pager", page);
 	}
 
-
+	@Override
 	public void setServletResponse(HttpServletResponse response) {
 		this.response=response;
 		
 	}
-
+	@Override
 	public void setServletRequest(HttpServletRequest request) {
 		this.request=request;
 		

@@ -12,10 +12,10 @@ public interface BaseService<PK, T> {
 	
 	public void add(T t);
 	
-	public int count(String column, String ifvalue);
+	public int count(String column,String ifvalue);
 	
 	public void delete(T t);
 	
-	public List<T> pagelist(DetachedCriteria dc, int startpage, int pagesize);
+	public List<T> pagelist(DetachedCriteria dc,int startpage,int pagesize);
 
 }

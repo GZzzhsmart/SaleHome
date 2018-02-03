@@ -107,7 +107,7 @@ body {
 			     <div class="nav_child">
 					  <a  href="<%=path%>/facemain/manyarticle">中国房产资讯 </a>						  
 					  <a  href="<%=path%>/hui-jxs/question.jsp">买房常见问题 </a>						  
-					  <a  href="<%=path%>/hui-jxs/buyhouseliucheng.jsp">中国买房流程 </a>
+					  <a  href="<%=path%>/facemain/buyhouseliucheng">中国买房流程 </a>
 					  <c:if test="<%=user!=null %>">
 					  	<c:if test="<%=user.getUsertypeInt()==0 %>">
 					  		<a  href="<%=path%>/page/addpage">购房调研测试 </a>					
@@ -137,12 +137,7 @@ body {
 			<c:if test="<%=user!=null %>">
 				<c:if test="<%=user.getUsertypeInt()==0%>">
 					<li id="nav_4">
-						<c:if test="<%=user.getNameString()==null %>">
-							<a rel="nofollow" class="nav_a" href="<%=path %>/lr/usermainface"><span>USER</span>未填写</a>
-						</c:if>
-						<c:if test="<%=user.getNameString()!=null %>">
-							<a rel="nofollow" class="nav_a" href="<%=path %>/lr/usermainface"><span>USER</span><%=user.getNameString() %></a>
-						</c:if>
+						<a rel="nofollow" class="nav_a" href="<%=path %>/lr/usermainface"><span>USER</span><%=user.getPhoneString()%></a>
 						<div class="nav_child">
 						 	<a rel="nofollow" href="<%=path %>/lr/usermainface">个人中心</a>						 
 						 	<a rel="nofollow" href="<%=path%>/lr/exit">退出</a>					
@@ -151,7 +146,7 @@ body {
 				</c:if>
 				<c:if test="<%=user.getUsertypeInt()==1%>">
 					<li id="nav_4">
-						<a rel="nofollow" class="nav_a" href="<%=path %>/lr/jxsmainface"><span>TAGNECY</span><%=user.getNameString() %></a>
+						<a rel="nofollow" class="nav_a" href="<%=path %>/lr/jxsmainface"><span>TAGNECY</span><%=user.getPhoneString() %></a>
 						<div class="nav_child">
 						 	<a rel="nofollow" href="<%=path %>/lr/jxsmainface">个人中心</a>						 
 						 	<a rel="nofollow" href="<%=path%>/lr/exit">安全退出</a>					
@@ -228,8 +223,8 @@ body {
 		</script>
         <div class="hot_city"><b>热门城市: </b>
           <a href="<%=path%>/facemain/othersloupan?loupan.nameString=赣州">赣州</a>
-          <a href="<%=path%>/facemain/othersloupan?loupan.nameString=赣州">上海</a>
-          <a href="<%=path%>/facemain/othersloupan?loupan.nameString=赣州">深圳</a>
+          <a href="<%=path%>/facemain/othersloupan?loupan.nameString=上海">上海</a>
+          <a href="<%=path%>/facemain/othersloupan?loupan.nameString=深圳">深圳</a>
           <a href="<%=path%>/facemain/othersloupan?loupan.nameString=广州">广州</a>
           <a href="<%=path%>/facemain/bestloupan">更多城市</a>        
         </div>

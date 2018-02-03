@@ -1,7 +1,7 @@
 package com.ht.dao.impl;
 
-import com.ht.dao.HistoryDAO;
-import com.ht.pojo.THistory;
+import java.util.List;
+
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -10,7 +10,10 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
-import java.util.List;
+import com.ht.dao.HistoryDAO;
+import com.ht.pojo.TBaobiao;
+import com.ht.pojo.THistory;
+import com.ht.pojo.THouse;
 
 public class HistoryDAOimpl implements HistoryDAO{
 
@@ -23,25 +26,25 @@ public class HistoryDAOimpl implements HistoryDAO{
 		this.sessionFactory = sessionFactory;
 	}
 
-	
+	@Override
 	public THistory queryById(String id) {
 		return null;
 	}
 
-	
+	@Override
 	public void update(THistory t) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	
+	@Override
 	public void add(THistory t) {
 		Session session = sessionFactory.getCurrentSession();
 		session.save(t);
 		
 	}
 
-	
+	@Override
 	public int count(String column, String ifvalue) {
 		Session session = sessionFactory.getCurrentSession();
 		DetachedCriteria dc = DetachedCriteria.forClass(THistory.class);
@@ -51,13 +54,13 @@ public class HistoryDAOimpl implements HistoryDAO{
 		return Integer.parseInt(criteria.uniqueResult().toString());
 	}
 
-	
+	@Override
 	public void delete(THistory t) {
 		Session session = sessionFactory.getCurrentSession();
 		session.delete(t);
 	}
 
-	
+	@Override
 	public List<THistory> pagelist(DetachedCriteria dc, int startpage, int pagesize) {
 		Session session = sessionFactory.getCurrentSession();
 		Criteria criteria = dc.getExecutableCriteria(session);
@@ -65,7 +68,7 @@ public class HistoryDAOimpl implements HistoryDAO{
 		return list;
 	}
 
-	
+	@Override
 	public List<THistory> historylist() {
 		Session session = sessionFactory.getCurrentSession();
 		String sql="select t.nameString,";
@@ -86,7 +89,7 @@ public class HistoryDAOimpl implements HistoryDAO{
 		return query.list();
 	}
 
-	
+	@Override
 	public int pagecount(DetachedCriteria dc) {
 		Session session = sessionFactory.getCurrentSession();
 		dc.setProjection(Projections.rowCount());

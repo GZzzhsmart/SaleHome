@@ -177,8 +177,11 @@ public class CustomerAction extends ActionSupport implements ServletRequestAware
 			page.setCurrentpage(Integer.parseInt(currentpage));
 		}
 		if(handle==null || handle.equals("")){
-			page.setHandle("firstpage");
-			//当前页的操作
+			if(currentpage==null || currentpage.equals("")){
+				page.setCurrentpage(1);
+			}else{	
+				page.setCurrentpage(Integer.parseInt(currentpage));
+			}
 		}else {
 			page.setHandle(handle);
 		}
@@ -187,23 +190,10 @@ public class CustomerAction extends ActionSupport implements ServletRequestAware
 			page.setStarlocal(0);
 			page.setPagebarsize(0);
 		}
-		if((page.getStarlocal()+page.getPagebarsize())>=page.getPagebarsum()){
-			DetachedCriteria dc = DetachedCriteria.forClass(TCustomer.class);
-			dc.add(Restrictions.eq("employeeId", e.getIdString()));
-			customerlist = customerService.pagelist(dc,(page.getPagebarsum()-page.getPagebarsize()), page.getPagebarsize());
-			if((page.getPagebarsum()-page.getPagebarsize())<0){
-				page.setStarlocal(0);
-			}else{
-				page.setStarlocal(page.getPagebarsum()-page.getPagebarsize());
-			}
-			request.setAttribute("pager", page);
-			return;
-		}else{
-			DetachedCriteria dc = DetachedCriteria.forClass(TCustomer.class);
-			dc.add(Restrictions.eq("employeeId", e.getIdString()));
-			customerlist = customerService.pagelist(dc, page.getStarlocal(), page.getPagebarsize());
-			request.setAttribute("pager", page);
-		}
+		DetachedCriteria dc = DetachedCriteria.forClass(TCustomer.class);
+		dc.add(Restrictions.eq("employeeId", e.getIdString()));
+		customerlist = customerService.pagelist(dc, page.getStarlocal(), page.getPagebarsize());
+		request.setAttribute("pager", page);
 	}
 	public void pagingjxslist() throws Exception {
 		HttpSession session = request.getSession();
@@ -211,7 +201,7 @@ public class CustomerAction extends ActionSupport implements ServletRequestAware
 		//实例化javabean，取参数
 		PagingBean page = new PagingBean();
 		//总记录条数，计算总页数
-		page.setPagebarsize(3);
+		page.setPagebarsize(10);
 		page.setPagebarsum(customerService.count("jxsidString", e.getIdString()));
 		//当前页
 		String currentpage = request.getParameter("currentpage");
@@ -234,24 +224,10 @@ public class CustomerAction extends ActionSupport implements ServletRequestAware
 			page.setStarlocal(0);
 			page.setPagebarsize(0);
 		}
-		if((page.getStarlocal()+page.getPagebarsize())>=page.getPagebarsum()){
-			DetachedCriteria dc = DetachedCriteria.forClass(TCustomer.class);
-			dc.add(Restrictions.eq("jxsidString", e.getIdString()));
-			customerlist = customerService.pagelist(dc,(page.getPagebarsum()-page.getPagebarsize()), page.getPagebarsize());
-			if((page.getPagebarsum()-page.getPagebarsize())<0){
-				page.setStarlocal(0);
-			}else{
-				page.setStarlocal(page.getPagebarsum()-page.getPagebarsize());
-			}
-			request.setAttribute("pager", page);
-			return;
-		}else{
-			DetachedCriteria dc = DetachedCriteria.forClass(TCustomer.class);
-			dc.add(Restrictions.eq("jxsidString", e.getIdString()));
-			customerlist = customerService.pagelist(dc, page.getStarlocal(), page.getPagebarsize());
-			request.setAttribute("pager", page);
-		}
-
+		DetachedCriteria dc = DetachedCriteria.forClass(TCustomer.class);
+		dc.add(Restrictions.eq("jxsidString", e.getIdString()));
+		customerlist = customerService.pagelist(dc, page.getStarlocal(), page.getPagebarsize());
+		request.setAttribute("pager", page);
 	}
 	public void paginguserlist() throws Exception {
 		HttpSession session = request.getSession();
@@ -301,10 +277,12 @@ public class CustomerAction extends ActionSupport implements ServletRequestAware
 			request.setAttribute("pager", page);
 		}
 	}
+	@Override
 	public void setServletResponse(HttpServletResponse response) {
 		this.response=response;
 		
 	}
+	@Override
 	public void setServletRequest(HttpServletRequest request) {
 		this.request=request;
 		

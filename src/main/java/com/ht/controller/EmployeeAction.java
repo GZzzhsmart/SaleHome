@@ -245,9 +245,9 @@ public class EmployeeAction extends ActionSupport implements ServletRequestAware
  		PrintWriter out = response.getWriter();
  		try {
  			//用户名
- 	 		String Uid = "絮落锦乡2";
+ 	 		String Uid = "絮落锦乡";
  	 		//接口安全秘钥
- 	 		String Key = "b9169f3196bc7084b30b";
+ 	 		String Key = "7dc6e6e7cf7ca510a6a4";
  	 		int num = new Random().nextInt(899999)+100000;
  	 		code=num;
  	 		List<TEmployee> list = employeeService.empList("phoneString", employeeaccount);
@@ -260,16 +260,16 @@ public class EmployeeAction extends ActionSupport implements ServletRequestAware
  	 		out.print(JSON.toJSON("密码修改成功，新密码已发送至你的手机，请查收。"));
  	 		System.out.println(code);
  	 		//短信内容
- 	 		String smsText = "【桃源盛景】欢迎入驻桃源盛景:你的验证码为:"+num+"。10分钟之内有效";
- 	 		logger.info("Ip为："+request.getRemoteAddr()+"的用户正在注册经销商账户,发送手机验证码，当前时间为："+new Date().toLocaleString());
+ 	 		String smsText = "【桃源盛景】检测到你正在修改你的登录密码:你的新密码为:"+num+"。请妥善保管，如不是本人操作，请修改你的密码。";
+ 	 		logger.info("Ip为："+request.getRemoteAddr()+"员工正在修改密码,发送手机验证码，当前时间为："+new Date().toLocaleString());
  	 		HttpClientUtil client = HttpClientUtil.getInstance();
  			//UTF发送，测试成功，在开发阶段不会启用，当答辩前一天左右开启
-// 			int result = client.sendMsgUtf8(Uid, Key, smsText, employeeaccount);
-// 			if(result>0){
-// 				System.out.println("经销商"+employeeaccount+"成功接收"+result+"条短信");
-// 			}else{
-// 				System.out.println(client.getErrorMsg(result));
-// 			}
+ 			int result = client.sendMsgUtf8(Uid, Key, smsText, employeeaccount);
+ 			if(result>0){
+ 				System.out.println("经销商"+employeeaccount+"成功接收"+result+"条短信");
+ 			}else{
+ 				System.out.println(client.getErrorMsg(result));
+ 			}
 		} catch (Exception e) {
 			out.print(JSON.toJSON("密码修改失败"));
 		}
@@ -420,24 +420,24 @@ public class EmployeeAction extends ActionSupport implements ServletRequestAware
 	public String findmypwd() throws Exception{
  		PrintWriter out = response.getWriter();
  		//用户名
- 		String Uid = "絮落锦乡2";
+ 		String Uid = "絮落锦乡";
  		//接口安全秘钥
- 		String Key = "b9169f3196bc7084b30b";
+ 		String Key = "7dc6e6e7cf7ca510a6a4";
  		int num = new Random().nextInt(899999)+100000;
  		code=num;
  		out.print(code);
  		System.out.println("验证码："+code);
  		//短信内容
- 		String smsText = "【桃源盛景】欢迎入驻桃源盛景:你的验证码为:"+num+"。";
- 		logger.info("Ip为："+request.getRemoteAddr()+"的用户正在注册经销商账户,发送手机验证码，当前时间为："+new Date().toLocaleString());
+ 		String smsText = "【桃源盛景】检测到你正在修改你的登录密码:你的新密码为:"+num+"。请妥善保管，如不是本人操作，请修改你的密码。";
+ 		logger.info("Ip为："+request.getRemoteAddr()+"的员工正在修改密码,发送手机验证码，当前时间为："+new Date().toLocaleString());
  		HttpClientUtil client = HttpClientUtil.getInstance();
 		//UTF发送，测试成功，在开发阶段不会启用，当答辩前一天左右开启
-//		int result = client.sendMsgUtf8(Uid, Key, smsText, registeraccount);
-//		if(result>0){
-//			System.out.println("经销商"+registeraccount+"成功接收"+result+"条短信");
-//		}else{
-//			System.out.println(client.getErrorMsg(result));
-//		}
+		int result = client.sendMsgUtf8(Uid, Key, smsText, registeraccount);
+		if(result>0){
+			System.out.println("经销商"+registeraccount+"成功接收"+result+"条短信");
+		}else{
+			System.out.println(client.getErrorMsg(result));
+		}
  		return null;
  	}
 	public void paginglist() throws Exception {
@@ -447,7 +447,7 @@ public class EmployeeAction extends ActionSupport implements ServletRequestAware
 		//实例化javabean，取参数
 		PagingBean page = new PagingBean();
 		//总记录条数，计算总页数
-		page.setPagebarsize(4);
+		page.setPagebarsize(10);
 		if(t==null){
 			page.setPagebarsum(employeeService.count("angencyIdString",tagency.getIdString()));
 		}else{
@@ -465,8 +465,11 @@ public class EmployeeAction extends ActionSupport implements ServletRequestAware
 		}
 		if(handle==null || handle.equals("")){
 			if(currentpage==null || currentpage.equals("")){
-				//当前页为第一页
-				page.setCurrentpage(1);
+				if(currentpage==null || currentpage.equals("")){
+					page.setCurrentpage(1);
+				}else{	
+					page.setCurrentpage(Integer.parseInt(currentpage));
+				}
 			}else{	//当前页为第一页
 				page.setCurrentpage(Integer.parseInt(currentpage));
 			}
@@ -479,27 +482,14 @@ public class EmployeeAction extends ActionSupport implements ServletRequestAware
 			page.setStarlocal(0);
 			page.setPagebarsize(0);
 		}
-		if((page.getStarlocal()+page.getPagebarsize())>=page.getPagebarsum()){
-			DetachedCriteria dc = DetachedCriteria.forClass(TEmployee.class);
-			if(t==null){
-				dc.add(Restrictions.eq("angencyIdString",tagency.getIdString()));
-			}else{
-				dc.add(Restrictions.eq("angencyIdString",t.getAngencyIdString()));
-			}
-			employeelist = employeeService.pagelist(dc,(page.getPagebarsum()-page.getPagebarsize()), page.getPagebarsize());
-			page.setStarlocal(page.getPagebarsum()-page.getPagebarsize());
-			request.setAttribute("pager", page);
-			return;
+		DetachedCriteria dc = DetachedCriteria.forClass(TEmployee.class);
+		if(t==null){
+			dc.add(Restrictions.eq("angencyIdString",tagency.getIdString()));
 		}else{
-			DetachedCriteria dc = DetachedCriteria.forClass(TEmployee.class);
-			if(t==null){
-				dc.add(Restrictions.eq("angencyIdString",tagency.getIdString()));
-			}else{
-				dc.add(Restrictions.eq("angencyIdString",t.getAngencyIdString()));
-			}
-			employeelist = employeeService.pagelist(dc, page.getStarlocal(), page.getPagebarsize());
-			request.setAttribute("pager", page);
+			dc.add(Restrictions.eq("angencyIdString",t.getAngencyIdString()));
 		}
+		employeelist = employeeService.pagelist(dc, page.getStarlocal(), page.getPagebarsize());
+		request.setAttribute("pager", page);
 	}
 	private synchronized String getFileName(String filename) {
 		int position = filename.lastIndexOf(".");
@@ -507,10 +497,12 @@ public class EmployeeAction extends ActionSupport implements ServletRequestAware
 		return System.nanoTime() + ext;
 	}
 
+	@Override
 	public void setServletResponse(HttpServletResponse response) {
 		this.response=response;
 		
 	}
+	@Override
 	public void setServletRequest(HttpServletRequest request) {
 		this.request=request;
 		

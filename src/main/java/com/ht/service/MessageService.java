@@ -6,5 +6,5 @@ import com.ht.pojo.TMessage;
 
 public interface MessageService extends BaseService<String, TMessage>{
 
-	public abstract List<TMessage> findmessage(String column, String ifvalue);
+	public abstract List<TMessage> findmessage(String column,String ifvalue);
 }

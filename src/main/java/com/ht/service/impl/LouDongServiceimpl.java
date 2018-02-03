@@ -1,12 +1,13 @@
 package com.ht.service.impl;
 
+import java.util.List;
+
+import org.hibernate.criterion.DetachedCriteria;
+
 import com.ht.dao.LouDongDAO;
 import com.ht.pojo.TBuilding;
 import com.ht.pojo.TBuildings;
 import com.ht.service.LouDongService;
-import org.hibernate.criterion.DetachedCriteria;
-
-import java.util.List;
 
 public class LouDongServiceimpl implements LouDongService{
 
@@ -67,7 +68,7 @@ public class LouDongServiceimpl implements LouDongService{
 		return louDongDAO.findloudong(idString);
 	}
 
-	
+	@Override
 	public int pagecount(DetachedCriteria dc) {
 		return louDongDAO.pagecount(dc);
 	}

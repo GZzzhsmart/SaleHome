@@ -1,21 +1,28 @@
 package com.ht.controller;
 
-import com.ht.pojo.*;
-import com.ht.service.ActivityService;
-import com.ht.service.LouPanService;
-import com.opensymphony.xwork2.ActionSupport;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.struts2.interceptor.ServletRequestAware;
 import org.apache.struts2.interceptor.ServletResponseAware;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.util.List;
+import com.ht.pojo.FileUpInfoVo;
+import com.ht.pojo.PagingBean;
+import com.ht.pojo.TActivity;
+import com.ht.pojo.TAgency;
+import com.ht.pojo.TBuildings;
+import com.ht.pojo.TManager;
+import com.ht.service.ActivityService;
+import com.ht.service.LouPanService;
+import com.opensymphony.xwork2.ActionSupport;
 
 public class ActivityAction extends ActionSupport implements ServletRequestAware,ServletResponseAware{
 
@@ -235,7 +242,7 @@ public class ActivityAction extends ActionSupport implements ServletRequestAware
 		//实例化javabean，取参数
 		PagingBean page = new PagingBean();
 		//总记录条数，计算总页数
-		page.setPagebarsize(4);
+		page.setPagebarsize(10);
 		page.setPagebarsum(activityService.count("jxsidString",tagency.getIdString()));
 		//当前页
 		String currentpage = request.getParameter("currentpage");
@@ -263,19 +270,11 @@ public class ActivityAction extends ActionSupport implements ServletRequestAware
 			page.setStarlocal(0);
 			page.setPagebarsize(0);
 		}
-		if((page.getStarlocal()+page.getPagebarsize())>=page.getPagebarsum()){
-			DetachedCriteria dc = DetachedCriteria.forClass(TActivity.class);
-			dc.add(Restrictions.eq("jxsidString",tagency.getIdString()));
-			activitylist = activityService.pagelist(dc,(page.getPagebarsum()-page.getPagebarsize()), page.getPagebarsize());
-			page.setStarlocal(page.getPagebarsum()-page.getPagebarsize());
-			request.setAttribute("pager", page);
-			return;
-		}else{
-			DetachedCriteria dc = DetachedCriteria.forClass(TActivity.class);
-			dc.add(Restrictions.eq("jxsidString",tagency.getIdString()));
-			activitylist = activityService.pagelist(dc, page.getStarlocal(), page.getPagebarsize());
-			request.setAttribute("pager", page);
-		}
+		DetachedCriteria dc = DetachedCriteria.forClass(TActivity.class);
+		dc.add(Restrictions.eq("jxsidString",tagency.getIdString()));
+		activitylist = activityService.pagelist(dc, page.getStarlocal(), page.getPagebarsize());
+		request.setAttribute("pager", page);
+
 	}
 	public void pagingmanagerlist() throws Exception {
 		HttpSession session = request.getSession();
@@ -311,27 +310,18 @@ public class ActivityAction extends ActionSupport implements ServletRequestAware
 			page.setStarlocal(0);
 			page.setPagebarsize(0);
 		}
-		if((page.getStarlocal()+page.getPagebarsize())>=page.getPagebarsum()){
-			DetachedCriteria dc = DetachedCriteria.forClass(TActivity.class);
-			dc.add(Restrictions.eq("manageridString",manager.getIdString()));
-			activitylist = activityService.pagelist(dc,(page.getPagebarsum()-page.getPagebarsize()), page.getPagebarsize());
-			page.setStarlocal(page.getPagebarsum()-page.getPagebarsize());
-			request.setAttribute("pager", page);
-			return;
-		}else{
-			DetachedCriteria dc = DetachedCriteria.forClass(TActivity.class);
-			dc.add(Restrictions.eq("manageridString",manager.getIdString()));
-			activitylist = activityService.pagelist(dc, page.getStarlocal(), page.getPagebarsize());
-			request.setAttribute("pager", page);
-		}
+		DetachedCriteria dc = DetachedCriteria.forClass(TActivity.class);
+		dc.add(Restrictions.eq("manageridString",manager.getIdString()));
+		activitylist = activityService.pagelist(dc, page.getStarlocal(), page.getPagebarsize());
+		request.setAttribute("pager", page);
 	}
-
+	@Override
 	public void setServletResponse(HttpServletResponse response) {
 		this.response=response;
 		
 	}
 
-
+	@Override
 	public void setServletRequest(HttpServletRequest request) {
 		this.request=request;
 		

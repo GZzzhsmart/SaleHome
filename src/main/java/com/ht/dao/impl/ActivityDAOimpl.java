@@ -1,8 +1,7 @@
 package com.ht.dao.impl;
 
-import com.ht.dao.ActivityDAO;
-import com.ht.pojo.TActivity;
-import com.ht.pojo.TAppointment;
+import java.util.List;
+
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -11,7 +10,9 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
-import java.util.List;
+import com.ht.dao.ActivityDAO;
+import com.ht.pojo.TActivity;
+import com.ht.pojo.TAppointment;
 
 @SuppressWarnings("deprecation")
 public class ActivityDAOimpl implements ActivityDAO{
@@ -25,27 +26,27 @@ public class ActivityDAOimpl implements ActivityDAO{
 		this.sessionFactory = sessionFactory;
 	}
 
-	
+	@Override
 	public TActivity queryById(String id) {
 		Session session = sessionFactory.getCurrentSession();
 		return session.get(TActivity.class, id);
 	}
 
-	
+	@Override
 	public void update(TActivity t) {
 		Session session = sessionFactory.getCurrentSession();
 		Query<TAppointment> query = session.createQuery("update TActivity t set t.statusInt ='"+t.getStatusInt()+"'  where t.idString ='"+t.getIdString()+"'");
 		query.executeUpdate();
 	}
 
-	
+	@Override
 	public void add(TActivity t) {
 		Session session = sessionFactory.getCurrentSession();
 		session.saveOrUpdate(t);
 		
 	}
 
-	
+	@Override
 	public int count(String column, String ifvalue) {
 		Session session = sessionFactory.getCurrentSession();
 		DetachedCriteria dc = DetachedCriteria.forClass(TActivity.class);
@@ -55,13 +56,13 @@ public class ActivityDAOimpl implements ActivityDAO{
 		return Integer.parseInt(criteria.uniqueResult().toString());
 	}
 
-	
+	@Override
 	public void delete(TActivity t) {
 		Session session = sessionFactory.getCurrentSession();
 		session.delete(t);
 	}
 
-	
+	@Override
 	public List<TActivity> pagelist(DetachedCriteria dc, int startpage, int pagesize) {
 		Session session = sessionFactory.getCurrentSession();
 		Criteria criteria = dc.getExecutableCriteria(session);
@@ -71,7 +72,7 @@ public class ActivityDAOimpl implements ActivityDAO{
 	}
 
 	@SuppressWarnings("unchecked")
-	
+	@Override
 	public List<TActivity> findactivity(String column, String ifvalue) {
 		Session session = sessionFactory.getCurrentSession();
 		DetachedCriteria dc = DetachedCriteria.forClass(TActivity.class);

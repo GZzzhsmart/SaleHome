@@ -16,7 +16,6 @@ import org.apache.struts2.interceptor.ServletResponseAware;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
 import com.ht.API.SendEmail;
@@ -251,8 +250,12 @@ public class TagneyAction extends ActionSupport implements ServletRequestAware,S
 	public void pagingsousuolist() throws Exception{
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		PagingBean page = new PagingBean();
-		page.setPagebarsize(3);
-		page.setPagebarsum(tAgencyService.likecount(starttime+" 00:00:00", endtime+" 23:59:59", tagency.getNameString()));
+		page.setPagebarsize(10);
+		if(starttime==null || endtime==null || starttime.equals("") || endtime.equals("")){
+			page.setPagebarsum(tAgencyService.likecount(starttime+" 00:00:00", endtime+" 23:59:59", tagency.getNameString()));
+		}else{
+			page.setPagebarsum(tAgencyService.count("", ""));
+		}
 		String currentpage = request.getParameter("currentpage");
 		String handle = request.getParameter("handle");
 		if(currentpage==null || currentpage.equals("")){
@@ -274,27 +277,16 @@ public class TagneyAction extends ActionSupport implements ServletRequestAware,S
 			page.setStarlocal(0);
 			page.setPagebarsize(0);
 		}
-		if((page.getStarlocal()+page.getPagebarsize())>=page.getPagebarsum()){
-			DetachedCriteria dc = DetachedCriteria.forClass(TAgency.class);
-			dc.add(Restrictions.like("nameString", tagency.getNameString(),MatchMode.ANYWHERE));
-			if(starttime!=null && starttime!=null){
-				dc.add(Restrictions.between("createdTime", df.parse(starttime+" 00:00:00"), df.parse(endtime+" 23:59:59")));
-			}	
-			tagencylist = tAgencyService.pagelist(dc,(page.getPagebarsum()-page.getPagebarsize()), page.getPagebarsize());
-			page.setStarlocal(page.getPagebarsum()-page.getPagebarsize());
-			request.setAttribute("pager", page);
-			return;
+		DetachedCriteria dc = DetachedCriteria.forClass(TAgency.class);
+		dc.add(Restrictions.like("nameString", tagency.getNameString(),MatchMode.ANYWHERE));
+		if(starttime==null && starttime==null){
+			
 		}else{
-			DetachedCriteria dc = DetachedCriteria.forClass(TAgency.class);
-			dc.add(Restrictions.like("nameString", tagency.getNameString(),MatchMode.ANYWHERE));
-			if(starttime!=null && starttime!=null){
-				dc.add(Restrictions.between("createdTime", df.parse(starttime+" 00:00:00"), df.parse(endtime+" 23:59:59")));
-			}	
-			tagencylist = tAgencyService.pagelist(dc, page.getStarlocal(), page.getPagebarsize());
-			request.setAttribute("pager", page);
-			request.setAttribute("oeder", "find");
-		}
-		
+			dc.add(Restrictions.between("createdTime", df.parse(starttime+" 00:00:00"), df.parse(endtime+" 23:59:59")));
+		}	
+		tagencylist = tAgencyService.pagelist(dc, page.getStarlocal(), page.getPagebarsize());
+		request.setAttribute("pager", page);
+		request.setAttribute("oeder", "find");
 	}
 	public void paginglist() throws Exception {
 		HttpSession session = request.getSession();

@@ -89,7 +89,7 @@ public class LouPanDAOimpl implements LouPanDAO{
 		return list;
 	}
 
-	
+	@Override
 	public int count() {
 		Session session = sessionFactory.getCurrentSession();
 		DetachedCriteria dc = DetachedCriteria.forClass(TBuildings.class);
@@ -98,7 +98,7 @@ public class LouPanDAOimpl implements LouPanDAO{
 		return Integer.parseInt(criteria.uniqueResult().toString());
 	}
 
-	
+	@Override
 	public List<TBuildings> likebuildings(String column, String ifvalue,int startpage,int pagesize) {
 		Session session = sessionFactory.getCurrentSession();
 		Query<TBuildings> query = session.createQuery("from TBuildings t where "+column+" like:ifvalue");
@@ -107,7 +107,7 @@ public class LouPanDAOimpl implements LouPanDAO{
 		return list;
 	}
 
-	
+	@Override
 	public int likecount(String column, String ifvalue) {
 		Session session = sessionFactory.getCurrentSession();
 		Query<TBuildings> query = session.createQuery("from TBuildings t where "+column+" like:ifvalue");
@@ -115,7 +115,7 @@ public class LouPanDAOimpl implements LouPanDAO{
 		return query.list().size();
 	}
 
-	
+	@Override
 	public List<TBuildings> likebuildings(String column, String ifvalue) {
 		Session session = sessionFactory.getCurrentSession();
 		Query<TBuildings> query = session.createQuery("from TBuildings t where "+column+" like:ifvalue or t.nameString like:value");
@@ -125,14 +125,14 @@ public class LouPanDAOimpl implements LouPanDAO{
 		return list;
 	}
 
-	
+	@Override
 	public List<TBuildings> baobiao() {
 		Session session = sessionFactory.getCurrentSession();
-		Query<TBuildings> query = session.createQuery("select t.avgPriceDouble,t.nameString,MONTH(t.openDate) from TBuildings t where  t.statusInt=1   group BY t.idString,MONTH(t.openDate) ");
+		Query<TBuildings> query = session.createQuery("select t.avgPriceDouble,t.nameString,MONTH(t.openDate) from TBuildings t where  t.statusInt=0   group BY t.idString,MONTH(t.openDate) ");
 		return query.list();
 	}
 
-	
+	@Override
 	public List<TBuildings> loupanlist() {
 		Session session = sessionFactory.getCurrentSession();
 		DetachedCriteria dc = DetachedCriteria.forClass(TBuildings.class);
@@ -141,7 +141,7 @@ public class LouPanDAOimpl implements LouPanDAO{
 		return list;
 	}
 
-	
+	@Override
 	public int pagecount(DetachedCriteria dc) {
 		Session session = sessionFactory.getCurrentSession();
 		dc.setProjection(Projections.rowCount());

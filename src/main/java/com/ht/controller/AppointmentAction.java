@@ -190,6 +190,7 @@ public class AppointmentAction extends ActionSupport implements ServletRequestAw
 	        String subject="【桃源盛景】";
 	        String contents="【桃源盛景】尊敬的"+appointment.getEmpIdString()+"销售顾问你好，你的客户"+username+"确认了预约时间，预约的时间为"+d+",请务必要准时。如有特殊情况可以申请更换顾问，但须提前通知客户。在此温馨提示：出行注意安全,顺利出单！谢谢！";
 	        SendEmail.sendMail(receiveEmail, receiveNick, subject, contents);
+	        System.out.println("发送成功！");
 		}
 		appointmentService.updateuserstatus(appointment);
 		paginguserlist();
@@ -228,7 +229,7 @@ public class AppointmentAction extends ActionSupport implements ServletRequestAw
 			out.print("0");
 			return null;
 		}else{
-			int count = appointmentService.count("houseIdString", appointment.getHouseIdString());
+			int count = appointmentService.count("userIdString", user.getIdString());
 			if(count>=1){
 				out.print("3");
 				return null;
@@ -285,7 +286,7 @@ public class AppointmentAction extends ActionSupport implements ServletRequestAw
 		HttpSession session = request.getSession();
  		TAgency t = (TAgency)session.getAttribute("tagency");
 		PagingBean page = new PagingBean();
-		page.setPagebarsize(4);
+		page.setPagebarsize(10);
 		page.setPagebarsum(appointmentService.count("jxsidString",t.getIdString()));
 		String currentpage = request.getParameter("currentpage");
 		String handle = request.getParameter("handle");
@@ -308,19 +309,10 @@ public class AppointmentAction extends ActionSupport implements ServletRequestAw
 			page.setStarlocal(0);
 			page.setPagebarsize(0);
 		}
-		if((page.getStarlocal()+page.getPagebarsize())>=page.getPagebarsum()){
-			DetachedCriteria dc = DetachedCriteria.forClass(TAppointment.class);
-			dc.add(Restrictions.eq("jxsidString",t.getIdString()));
-			appointmentlist = appointmentService.pagelist(dc,(page.getPagebarsum()-page.getPagebarsize()), page.getPagebarsize());
-			page.setStarlocal(page.getPagebarsum()-page.getPagebarsize());
-			request.setAttribute("pager", page);
-			return;
-		}else{
-			DetachedCriteria dc = DetachedCriteria.forClass(TAppointment.class);
-			dc.add(Restrictions.eq("jxsidString",t.getIdString()));
-			appointmentlist = appointmentService.pagelist(dc, page.getStarlocal(), page.getPagebarsize());
-			request.setAttribute("pager", page);
-		}
+		DetachedCriteria dc = DetachedCriteria.forClass(TAppointment.class);
+		dc.add(Restrictions.eq("jxsidString",t.getIdString()));
+		appointmentlist = appointmentService.pagelist(dc, page.getStarlocal(), page.getPagebarsize());
+		request.setAttribute("pager", page);
 	}
 	public void paginguserlist() throws Exception {
 		HttpSession session = request.getSession();
@@ -449,11 +441,13 @@ public class AppointmentAction extends ActionSupport implements ServletRequestAw
 		}
 	}
 
+	@Override
 	public void setServletResponse(HttpServletResponse response) {
 		this.response=response;
 		
 	}
 
+	@Override
 	public void setServletRequest(HttpServletRequest request) {
 		this.request=request;
 		

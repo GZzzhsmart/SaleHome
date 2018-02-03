@@ -9,7 +9,7 @@ import com.ht.pojo.TBuildings;
 
 public interface LouDongService extends BaseService<String, TBuilding>{
 
-	public abstract List<TBuilding>  loudonglist(String column, String ifvalue);
+	public abstract List<TBuilding>  loudonglist(String column,String ifvalue);
 	public abstract List<TBuildings> findloupan(String jxsidString);
 	public abstract List<TBuilding> findloudong(String idString);
 	public abstract int pagecount(DetachedCriteria dc);

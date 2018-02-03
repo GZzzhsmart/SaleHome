@@ -1,8 +1,8 @@
 package com.ht.dao.impl;
 
-import com.ht.dao.TAgencyDAO;
-import com.ht.pojo.TAgency;
-import com.ht.pojo.TBuildings;
+import java.text.SimpleDateFormat;
+import java.util.List;
+
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -12,8 +12,9 @@ import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
-import java.text.SimpleDateFormat;
-import java.util.List;
+import com.ht.dao.TAgencyDAO;
+import com.ht.pojo.TAgency;
+import com.ht.pojo.TBuildings;
 
 public class TAgencyDAOimpl implements TAgencyDAO{
 
@@ -87,7 +88,7 @@ public class TAgencyDAOimpl implements TAgencyDAO{
 		return list;
 	}
 
-	
+	@Override
 	public void changestatus(String column, String ifvalue,String id) {
 		Session session = sessionFactory.getCurrentSession();
 		Query<TBuildings> query = session.createQuery("update TAgency t set "+column+"="+ifvalue+"  where t.idString ='"+id+"'");
@@ -95,7 +96,7 @@ public class TAgencyDAOimpl implements TAgencyDAO{
 		
 	}
 
-	
+	@Override
 	public void shenhe(TAgency tAgency) {
 		Session session = sessionFactory.getCurrentSession();
 		Query<TBuildings> query = session.createQuery("update TAgency t set t.checkedStatusInt='"+tAgency.getCheckedStatusInt()+"',t.reasonString='"+tAgency.getReasonString()+"'  where t.idString ='"+tAgency.getIdString()+"'");
@@ -104,7 +105,7 @@ public class TAgencyDAOimpl implements TAgencyDAO{
 		
 	}
 
-	
+	@Override
 	public int likecount(String starttime, String endtime, String name){
 		try {
 			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -127,7 +128,7 @@ public class TAgencyDAOimpl implements TAgencyDAO{
 		}
 	}
 
-	
+	@Override
 	public void updatelogo(TAgency t) {
 		Session session = sessionFactory.getCurrentSession();
 		Query<TBuildings> query = session.createQuery("update TAgency t set t.logoString='"+t.getLogoString()+"'  where t.idString ='"+t.getIdString()+"'");
@@ -135,7 +136,7 @@ public class TAgencyDAOimpl implements TAgencyDAO{
 		
 	}
 
-	
+	@Override
 	public void updatetagency(TAgency t) {
 		Session session = sessionFactory.getCurrentSession();
 		session.update(t);

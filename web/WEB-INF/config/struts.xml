@@ -15,7 +15,6 @@
 
     <package name="basePackage" extends="json-default">
     </package>
-    <include file="../config/struts-test.xml"></include>
     <include file="../config/struts-login-regirest.xml"></include>
     <include file="../config/struts-loupan.xml"></include>
     <include file="../config/struts-loupanimg.xml"></include>

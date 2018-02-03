@@ -1,7 +1,7 @@
 package com.ht.dao.impl;
 
-import com.ht.dao.UserDAO;
-import com.ht.pojo.TUser;
+import java.util.List;
+
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -10,7 +10,8 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
-import java.util.List;
+import com.ht.dao.UserDAO;
+import com.ht.pojo.TUser;
 
 public class UserDAOimpl implements UserDAO{
 
@@ -85,7 +86,7 @@ public class UserDAOimpl implements UserDAO{
 		query.executeUpdate();
 		
 	}
-	
+	@Override
 	public List<TUser> finduser(String column, String ifvalue) {
 		Session session = sessionFactory.getCurrentSession();
 		DetachedCriteria dc = DetachedCriteria.forClass(TUser.class);

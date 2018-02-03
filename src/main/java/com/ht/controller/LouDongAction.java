@@ -212,7 +212,7 @@ public class LouDongAction extends ActionSupport implements ServletRequestAware,
 		loudong.setBuildingsId(loupan.getIdString());
 		loudong.setTotalRoomInt((loudong.getFloorRoomsInt()*loudong.getTotalFloorInt()));
 		loudong.setCreatedTimeString(new Date());
-		loudong.setStatusInt(1);
+		loudong.setStatusInt(0);
 		loudong.setJxsidString(tagency.getIdString());
 		louDongService.add(loudong);
 		paginglist();
@@ -272,48 +272,23 @@ public class LouDongAction extends ActionSupport implements ServletRequestAware,
 			page.setStarlocal(0);
 			page.setPagebarsize(0);
 		}
-		if((page.getStarlocal()+page.getPagebarsize())>=page.getPagebarsum()){
-			DetachedCriteria dc = DetachedCriteria.forClass(TBuilding.class);
-			if(tagency==null){
-				if(startTime==null || endTime==null || startTime.equals("") || endTime.equals("")){
-					dc.add(Restrictions.eq("jxsidString",employee.getAngencyIdString()));
-				}else{
-					dc.add(Restrictions.between("createdTimeString", df.parse(startTime+" 00:00:00"), df.parse(endTime+" 23:59:59")));
-					dc.add(Restrictions.eq("jxsidString",employee.getAngencyIdString()));
-				}
+		DetachedCriteria dc = DetachedCriteria.forClass(TBuilding.class);
+		if(tagency==null){
+			if(startTime==null || endTime==null || startTime.equals("") || endTime.equals("")){
+				dc.add(Restrictions.eq("jxsidString",employee.getAngencyIdString()));
 			}else{
-				if(startTime==null || endTime==null || startTime.equals("") || endTime.equals("")){
-					dc.add(Restrictions.eq("jxsidString",tagency.getIdString()));
-				}else{
-					dc.add(Restrictions.between("createdTimeString", df.parse(startTime+" 00:00:00"), df.parse(endTime+" 23:59:59")));
-					dc.add(Restrictions.eq("jxsidString",tagency.getIdString()));
-				}
+				dc.add(Restrictions.between("createdTimeString", df.parse(startTime+" 00:00:00"), df.parse(endTime+" 23:59:59")));
+				dc.add(Restrictions.eq("jxsidString",employee.getAngencyIdString()));
 			}
-			loudonglist = louDongService.pagelist(dc,(page.getPagebarsum()-page.getPagebarsize()), page.getPagebarsize());
-			page.setStarlocal(page.getPagebarsum()-page.getPagebarsize());
-			request.setAttribute("pager", page);
-			return;
 		}else{
-			DetachedCriteria dc = DetachedCriteria.forClass(TBuilding.class);
-			if(tagency==null){
-				if(startTime==null || endTime==null || startTime.equals("") || endTime.equals("")){
-					dc.add(Restrictions.eq("jxsidString",employee.getAngencyIdString()));
-				}else{
-					dc.add(Restrictions.between("createdTimeString", df.parse(startTime+" 00:00:00"), df.parse(endTime+" 23:59:59")));
-					dc.add(Restrictions.eq("jxsidString",employee.getAngencyIdString()));
-				}
+			if(startTime==null || endTime==null || startTime.equals("") || endTime.equals("")){
+				dc.add(Restrictions.eq("jxsidString",tagency.getIdString()));
 			}else{
-				if(startTime==null || endTime==null || startTime.equals("") || endTime.equals("")){
-					dc.add(Restrictions.eq("jxsidString",tagency.getIdString()));
-				}else{
-					dc.add(Restrictions.between("createdTimeString", df.parse(startTime+" 00:00:00"), df.parse(endTime+" 23:59:59")));
-					dc.add(Restrictions.eq("jxsidString",tagency.getIdString()));
-				}
+				dc.add(Restrictions.between("createdTimeString", df.parse(startTime+" 00:00:00"), df.parse(endTime+" 23:59:59")));
+				dc.add(Restrictions.eq("jxsidString",tagency.getIdString()));
 			}
-			loudonglist = louDongService.pagelist(dc, page.getStarlocal(), page.getPagebarsize());
-			request.setAttribute("pager", page);
 		}
-
+		loudonglist = louDongService.pagelist(dc, page.getStarlocal(), page.getPagebarsize());
+		request.setAttribute("pager", page);
 	}
-	
 }

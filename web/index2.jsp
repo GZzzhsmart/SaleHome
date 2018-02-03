@@ -1,5 +1,7 @@
 <%@page import="com.ht.pojo.TUser"%>
 <%@page import="com.ht.pojo.TAgency"%>
+<%@page import="javax.persistence.criteria.CriteriaBuilder.In"%>
+<%@page import="org.apache.commons.lang3.ClassUtils.Interfaces"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>

@@ -105,7 +105,7 @@ public class CommentAction extends ActionSupport implements ServletResponseAware
 		TUser t = (TUser)session.getAttribute("user");
 		PagingBean page = new PagingBean();
 		//总记录条数，计算总页数
-		page.setPagebarsize(4);
+		page.setPagebarsize(10);
 		page.setPagebarsum(commentService.count("userIdString",t.getIdString()));
 		//当前页
 		String currentpage = request.getParameter("currentpage");
@@ -133,26 +133,18 @@ public class CommentAction extends ActionSupport implements ServletResponseAware
 			page.setStarlocal(0);
 			page.setPagebarsize(0);
 		}
-		if((page.getStarlocal()+page.getPagebarsize())>=page.getPagebarsum()){
-			DetachedCriteria dc = DetachedCriteria.forClass(TComment.class);
-			dc.addOrder(Order.desc("commentTime"));
-			dc.add(Restrictions.eq("userIdString",t.getIdString()));
-			commentlist = commentService.pagelist(dc,(page.getPagebarsum()-page.getPagebarsize()), page.getPagebarsize());
-			page.setStarlocal(page.getPagebarsum()-page.getPagebarsize());
-			request.setAttribute("pager", page);
-			return;
-		}else{
-			DetachedCriteria dc = DetachedCriteria.forClass(TComment.class);
-			dc.addOrder(Order.desc("commentTime"));
-			dc.add(Restrictions.eq("userIdString",t.getIdString()));
-			commentlist = commentService.pagelist(dc, page.getStarlocal(), page.getPagebarsize());
-			request.setAttribute("pager", page);
-		}
+		DetachedCriteria dc = DetachedCriteria.forClass(TComment.class);
+		dc.addOrder(Order.desc("commentTime"));
+		dc.add(Restrictions.eq("userIdString",t.getIdString()));
+		commentlist = commentService.pagelist(dc, page.getStarlocal(), page.getPagebarsize());
+		request.setAttribute("pager", page);
 	}
+	@Override
 	public void setServletRequest(HttpServletRequest request) {
 		this.request=request;
 		
 	}
+	@Override
 	public void setServletResponse(HttpServletResponse response) {
 		this.response=response;
 		

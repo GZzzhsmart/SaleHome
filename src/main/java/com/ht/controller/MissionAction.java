@@ -1,20 +1,23 @@
 package com.ht.controller;
 
-import com.ht.pojo.PagingBean;
-import com.ht.pojo.TEmployee;
-import com.ht.pojo.TMission;
-import com.ht.service.EmployeeService;
-import com.ht.service.MissionService;
-import com.opensymphony.xwork2.ActionSupport;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import org.apache.struts2.interceptor.ServletRequestAware;
 import org.apache.struts2.interceptor.ServletResponseAware;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import java.util.List;
+import com.ht.pojo.PagingBean;
+import com.ht.pojo.TCustomer;
+import com.ht.pojo.TEmployee;
+import com.ht.pojo.TMission;
+import com.ht.service.EmployeeService;
+import com.ht.service.MissionService;
+import com.opensymphony.xwork2.ActionSupport;
 
 public class MissionAction extends ActionSupport implements ServletRequestAware,ServletResponseAware{
 
@@ -122,7 +125,7 @@ public class MissionAction extends ActionSupport implements ServletRequestAware,
 		//实例化javabean，取参数
 		PagingBean page = new PagingBean();
 		//总记录条数，计算总页数
-		page.setPagebarsize(4);
+		page.setPagebarsize(10);
 		page.setPagebarsum(missionService.count("jxsidString",t.getAngencyIdString()));
 		//当前页
 		String currentpage = request.getParameter("currentpage");
@@ -150,26 +153,18 @@ public class MissionAction extends ActionSupport implements ServletRequestAware,
 			page.setStarlocal(0);
 			page.setPagebarsize(0);
 		}
-		if((page.getStarlocal()+page.getPagebarsize())>=page.getPagebarsum()){
-			DetachedCriteria dc = DetachedCriteria.forClass(TMission.class);
-			dc.add(Restrictions.eq("jxsidString",t.getAngencyIdString()));
-			missionlist = missionService.pagelist(dc,(page.getPagebarsum()-page.getPagebarsize()), page.getPagebarsize());
-			page.setStarlocal(page.getPagebarsum()-page.getPagebarsize());
-			request.setAttribute("pager", page);
-		}else{
-			DetachedCriteria dc = DetachedCriteria.forClass(TMission.class);
-			dc.add(Restrictions.eq("jxsidString",t.getAngencyIdString()));
-			missionlist = missionService.pagelist(dc, page.getStarlocal(), page.getPagebarsize());
-			request.setAttribute("pager", page);
-		}
+		DetachedCriteria dc = DetachedCriteria.forClass(TMission.class);
+		dc.add(Restrictions.eq("jxsidString",t.getAngencyIdString()));
+		missionlist = missionService.pagelist(dc, page.getStarlocal(), page.getPagebarsize());
+		request.setAttribute("pager", page);
 	}
-
+	@Override
 	public void setServletResponse(HttpServletResponse response) {
 		this.response=response;
 		
 	}
 
-
+	@Override
 	public void setServletRequest(HttpServletRequest request) {
 		this.request=request;
 		

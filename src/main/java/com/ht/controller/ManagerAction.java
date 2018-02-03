@@ -342,24 +342,31 @@ public class ManagerAction extends ActionSupport implements ServletRequestAware,
 	public String sendcode() throws Exception{
  		PrintWriter out = response.getWriter();
  		//用户名
- 		String Uid = "絮落锦乡2";
+ 		String Uid = "絮落锦乡";
  		//接口安全秘钥
- 		String Key = "b9169f3196bc7084b30b";
+ 		String Key = "7dc6e6e7cf7ca510a6a4";
  		int num = new Random().nextInt(899999)+100000;
  		code=num;
- 		out.print(code);
+ 		List<TManager> list = managerService.findManager("phoneString", manageraccount);
+ 		if(list.size()==0){
+ 		}else{
+ 			manager = list.get(0);
+ 		}
+ 		manager.setPasswordString(AesUtils.encryptStr(num+"", AesUtils.SECRETKEY));
+ 		managerService.updatepwd(manager);
+ 		out.print(JSON.toJSON("密码修改成功，新密码已发送至你的手机，请查收。"));
  		System.out.println(code);
  		//短信内容
- 		String smsText = "【桃源盛景】欢迎入驻桃源盛景:你的验证码为:"+num+"。10分钟之内有效";
+ 		String smsText = "【桃源盛景】检测到你正在修改密码:你的新密码为:"+num+"。10分钟之内有效，请妥善保管。";
  		logger.info("Ip为："+request.getRemoteAddr()+"的用户正在注册经销商账户,发送手机验证码，当前时间为："+new Date().toLocaleString());
  		HttpClientUtil client = HttpClientUtil.getInstance();
 		//UTF发送，测试成功，在开发阶段不会启用，当答辩前一天左右开启
-//		int result = client.sendMsgUtf8(Uid, Key, smsText, registeraccount);
-//		if(result>0){
-//			System.out.println("经销商"+registeraccount+"成功接收"+result+"条短信");
-//		}else{
-//			System.out.println(client.getErrorMsg(result));
-//		}
+		int result = client.sendMsgUtf8(Uid, Key, smsText, registeraccount);
+		if(result>0){
+			System.out.println("经销商"+registeraccount+"成功接收"+result+"条短信");
+		}else{
+			System.out.println(client.getErrorMsg(result));
+		}
  		return null;
  	}
  	public String checkcode() throws Exception{
@@ -477,7 +484,7 @@ public class ManagerAction extends ActionSupport implements ServletRequestAware,
 		//实例化javabean，取参数
 		PagingBean page = new PagingBean();
 		//总记录条数，计算总页数
-		page.setPagebarsize(4);
+		page.setPagebarsize(10);
 		page.setPagebarsum(managerService.count("",""));
 		//当前页
 		String currentpage = request.getParameter("currentpage");
@@ -505,19 +512,10 @@ public class ManagerAction extends ActionSupport implements ServletRequestAware,
 			page.setStarlocal(0);
 			page.setPagebarsize(0);
 		}
-		if((page.getStarlocal()+page.getPagebarsize())>=page.getPagebarsum()){
-			DetachedCriteria dc = DetachedCriteria.forClass(TManager.class);
-			dc.add(Restrictions.not(Restrictions.eq("idString",manager.getIdString())));
-			managerlist = managerService.pagelist(dc,(page.getPagebarsum()-page.getPagebarsize()), page.getPagebarsize());
-			page.setStarlocal(page.getPagebarsum()-page.getPagebarsize());
-			request.setAttribute("pager", page);
-			return;
-		}else{
-			DetachedCriteria dc = DetachedCriteria.forClass(TManager.class);
-			dc.add(Restrictions.not(Restrictions.eq("idString",manager.getIdString())));
-			managerlist = managerService.pagelist(dc, page.getStarlocal(), page.getPagebarsize());
-			request.setAttribute("pager", page);
-		}
+		DetachedCriteria dc = DetachedCriteria.forClass(TManager.class);
+		dc.add(Restrictions.not(Restrictions.eq("idString",manager.getIdString())));
+		managerlist = managerService.pagelist(dc, page.getStarlocal(), page.getPagebarsize());
+		request.setAttribute("pager", page);
 
 	}
 	public String upfile() throws Exception{
@@ -677,11 +675,13 @@ public class ManagerAction extends ActionSupport implements ServletRequestAware,
 		paginglist1();
 		return "updatearticlestatus";
 	}
+	@Override
 	public void setServletResponse(HttpServletResponse response) {
 		this.response = response;
 
 	}
 
+	@Override
 	public void setServletRequest(HttpServletRequest request) {
 		this.request = request;
 
@@ -696,9 +696,9 @@ public class ManagerAction extends ActionSupport implements ServletRequestAware,
  		PrintWriter out = response.getWriter();
  		try {
  			//用户名
- 	 		String Uid = "絮落锦乡2";
+ 	 		String Uid = "絮落锦乡";
  	 		//接口安全秘钥
- 	 		String Key = "b9169f3196bc7084b30b";
+ 	 		String Key = "7dc6e6e7cf7ca510a6a4";
  	 		int num = new Random().nextInt(899999)+100000;
  	 		code=num;
  	 		List<TManager> list = managerService.findManager("phoneString", manageraccount);
@@ -711,16 +711,16 @@ public class ManagerAction extends ActionSupport implements ServletRequestAware,
  	 		out.print(JSON.toJSON("密码修改成功，新密码已发送至你的手机，请查收。"));
  	 		System.out.println(code);
  	 		//短信内容
- 	 		String smsText = "【桃源盛景】欢迎入驻桃源盛景:你的验证码为:"+num+"。10分钟之内有效";
+ 	 		String smsText = "【桃源盛景】检测到你正在修改密码:你的新密码为:"+num+"。10分钟之内有效，请妥善保管。";
  	 		logger.info("Ip为："+request.getRemoteAddr()+"的用户正在注册经销商账户,发送手机验证码，当前时间为："+new Date().toLocaleString());
  	 		HttpClientUtil client = HttpClientUtil.getInstance();
  			//UTF发送，测试成功，在开发阶段不会启用，当答辩前一天左右开启
-// 			int result = client.sendMsgUtf8(Uid, Key, smsText, employeeaccount);
-// 			if(result>0){
-// 				System.out.println("经销商"+employeeaccount+"成功接收"+result+"条短信");
-// 			}else{
-// 				System.out.println(client.getErrorMsg(result));
-// 			}
+ 			int result = client.sendMsgUtf8(Uid, Key, smsText, manageraccount);
+ 			if(result>0){
+ 				System.out.println("经销商"+manageraccount+"成功接收"+result+"条短信");
+ 			}else{
+ 				System.out.println(client.getErrorMsg(result));
+ 			}
 		} catch (Exception e) {
 			out.print(JSON.toJSON("密码修改失败"));
 		}

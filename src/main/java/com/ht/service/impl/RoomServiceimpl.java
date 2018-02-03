@@ -1,13 +1,14 @@
 package com.ht.service.impl;
 
+import java.util.List;
+
+import org.hibernate.criterion.DetachedCriteria;
+
 import com.ht.dao.RoomDAO;
 import com.ht.pojo.TBuilding;
 import com.ht.pojo.THouse;
 import com.ht.pojo.TRoom;
 import com.ht.service.RoomService;
-import org.hibernate.criterion.DetachedCriteria;
-
-import java.util.List;
 
 public class RoomServiceimpl implements RoomService{
 
@@ -68,7 +69,7 @@ public class RoomServiceimpl implements RoomService{
 		return roomDAO.findhuxing(column, ifvalue);
 	}
 
-	
+	@Override
 	public List<TRoom> roomlist() {
 		return roomDAO.roomlist();
 	}

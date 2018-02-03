@@ -1,6 +1,7 @@
 package com.ht.controller;
 
 import java.io.PrintWriter;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -15,23 +16,27 @@ import org.apache.log4j.Logger;
 import org.apache.struts2.interceptor.ServletRequestAware;
 import org.apache.struts2.interceptor.ServletResponseAware;
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
 import com.alibaba.fastjson.JSON;
 import com.ht.API.HttpClientUtil;
 import com.ht.pluspassword.AesUtils;
+import com.ht.pojo.TActivity;
 import com.ht.pojo.TAgency;
 import com.ht.pojo.TArticle;
 import com.ht.pojo.TBuildings;
+import com.ht.pojo.TPhoneCode;
 import com.ht.pojo.TUser;
+import com.ht.service.ActivityService;
 import com.ht.service.ArticleService;
 import com.ht.service.LoginRegisterService;
 import com.ht.service.LouPanService;
+import com.ht.service.PhoneCodeService;
 import com.ht.service.TAgencyService;
 import com.ht.service.UserService;
 import com.opensymphony.xwork2.ActionSupport;
 
-import jdk.nashorn.internal.runtime.linker.LinkerCallSite;
 
 public class Login_RegirestAction extends ActionSupport implements ServletRequestAware,ServletResponseAware{
 		
@@ -55,6 +60,27 @@ public class Login_RegirestAction extends ActionSupport implements ServletReques
 	private TBuildings loupan;
 	private LouPanService louPanService;
 	private UserService userService;
+	private PhoneCodeService phoneCodeService;
+	private ActivityService activityService;
+	private List<TActivity> activitylist;
+	public ActivityService getActivityService() {
+		return activityService;
+	}
+	public void setActivityService(ActivityService activityService) {
+		this.activityService = activityService;
+	}
+	public List<TActivity> getActivitylist() {
+		return activitylist;
+	}
+	public void setActivitylist(List<TActivity> activitylist) {
+		this.activitylist = activitylist;
+	}
+	public PhoneCodeService getPhoneCodeService() {
+		return phoneCodeService;
+	}
+	public void setPhoneCodeService(PhoneCodeService phoneCodeService) {
+		this.phoneCodeService = phoneCodeService;
+	}
 	public UserService getUserService() {
 		return userService;
 	}
@@ -185,8 +211,12 @@ public class Login_RegirestAction extends ActionSupport implements ServletReques
  		logger.info("Ip为："+request.getRemoteAddr()+"的用户正在登录系统，当前时间为："+new Date().toLocaleString());
  		articlelist = articleService.facetaricle();
 		DetachedCriteria dc = DetachedCriteria.forClass(TBuildings.class);
-		dc.add(Restrictions.eq("statusInt", 1));
+		dc.add(Restrictions.eq("statusInt", 0));
 		loupanlist = louPanService.pagelist(dc, 0, 10);
+		DetachedCriteria dc1 = DetachedCriteria.forClass(TActivity.class);
+		dc1.add(Restrictions.eq("statusInt", 0));
+		dc1.addOrder(Order.desc("startTime"));
+		activitylist = activityService.pagelist(dc1, 0, 2);
 		return "main";
  	}
  	public String exit() throws Exception{
@@ -231,28 +261,65 @@ public class Login_RegirestAction extends ActionSupport implements ServletReques
  		response.sendRedirect(request.getContextPath()+"/index.jsp");
  		return null;
  	}
- 	public String sendcode() throws Exception{
+ 	public String regssendcode() throws Exception{
+ 		response.setContentType("text/html;charset=utf-8");
  		PrintWriter out = response.getWriter();
- 		//用户名
- 		String Uid = "絮落锦乡2";
- 		//接口安全秘钥
- 		String Key = "b9169f3196bc7084b30b";
+    	String Uid = "絮落锦乡";
+ 		String Key = "7dc6e6e7cf7ca510a6a4";
  		int num = new Random().nextInt(899999)+100000;
  		code=num;
- 		out.print(code);
  		System.out.println("验证码："+code);
- 		//短信内容
  		String smsText = "【桃源盛景】欢迎入驻桃源盛景:你的验证码为:"+num+"。10分钟之内有效";
  		logger.info("Ip为："+request.getRemoteAddr()+"的用户正在注册经销商账户,发送手机验证码，当前时间为："+new Date().toLocaleString());
  		HttpClientUtil client = HttpClientUtil.getInstance();
 		//UTF发送，测试成功，在开发阶段不会启用，当答辩前一天左右开启
-//		int result = client.sendMsgUtf8(Uid, Key, smsText, registeraccount);
-//		if(result>0){
-//			System.out.println("经销商"+registeraccount+"成功接收"+result+"条短信");
-//		}else{
-//			System.out.println(client.getErrorMsg(result));
-//		}
+		int result = client.sendMsgUtf8(Uid, Key, smsText, registeraccount);
+		if(result>0){
+			System.out.println("经销商"+registeraccount+"成功接收"+result+"条短信");
+		}else{
+			System.out.println(client.getErrorMsg(result));
+		}
  		return null;
+ 	}
+ 	public String sendcode() throws Exception{
+ 		response.setContentType("text/html;charset=utf-8");
+ 		PrintWriter out = response.getWriter();
+	    Calendar cal = Calendar.getInstance();
+        int day=cal.get(Calendar.DATE);
+        int number =0;
+        try {
+        	number = phoneCodeService.count(day+"", request.getRemoteAddr());
+		} catch (Exception e) {
+			e.printStackTrace();
+			number=0;
+		}
+        if(number>2){
+        	out.print(JSON.toJSON("你操作频繁，请明天在试！"));
+        	return null;
+        }else{
+        	String Uid = "絮落锦乡";
+     		String Key = "7dc6e6e7cf7ca510a6a4";
+     		int num = new Random().nextInt(899999)+100000;
+     		code=num;
+     		TPhoneCode t = new TPhoneCode();
+     		t.setPhoneString(request.getRemoteAddr());
+     		t.setPhoneCode(num);
+     		t.setSendTime(new Date());
+     		phoneCodeService.add(t);
+//     		out.print(code);
+     		System.out.println("验证码："+code);
+     		String smsText = "【桃源盛景】检测到你正在修改你的密码:你的验证码是:"+num+",如果不是本人操作,请修改你的密码,10分钟之内有效";
+     		logger.info("Ip为："+request.getRemoteAddr()+"的用户正在修改密码,发送手机验证码，当前时间为："+new Date().toLocaleString());
+     		HttpClientUtil client = HttpClientUtil.getInstance();
+    		//UTF发送，测试成功，在开发阶段不会启用，当答辩前一天左右开启
+    		int result = client.sendMsgUtf8(Uid, Key, smsText, useraccount);
+    		if(result>0){
+    			System.out.println("经销商"+useraccount+"成功接收"+result+"条短信");
+    		}else{
+    			System.out.println(client.getErrorMsg(result));
+    		}
+     		return null;
+        }
  	}
  	public String findpwd() throws Exception{
  		List<TUser> list = userService.finduser("phoneString", useraccount);

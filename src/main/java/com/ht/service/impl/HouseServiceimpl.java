@@ -1,12 +1,13 @@
 package com.ht.service.impl;
 
+import java.util.List;
+
+import org.hibernate.criterion.DetachedCriteria;
+
 import com.ht.dao.HouseDAO;
 import com.ht.pojo.TBuilding;
 import com.ht.pojo.THouse;
 import com.ht.service.HouseService;
-import org.hibernate.criterion.DetachedCriteria;
-
-import java.util.List;
 
 public class HouseServiceimpl implements HouseService{
 
@@ -59,7 +60,7 @@ public class HouseServiceimpl implements HouseService{
 		return houseDAO.findhouse(column, ifvlue);
 	}
 
-	
+	@Override
 	public int pagecount(DetachedCriteria dc) {
 		return houseDAO.pagecount(dc);
 	}

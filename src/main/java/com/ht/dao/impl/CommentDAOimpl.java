@@ -1,8 +1,7 @@
 package com.ht.dao.impl;
 
-import com.ht.dao.CommentDAO;
-import com.ht.pojo.TArticle;
-import com.ht.pojo.TComment;
+import java.util.List;
+
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -11,7 +10,9 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
-import java.util.List;
+import com.ht.dao.CommentDAO;
+import com.ht.pojo.TArticle;
+import com.ht.pojo.TComment;
 
 public class CommentDAOimpl implements CommentDAO{
 
@@ -25,27 +26,27 @@ public class CommentDAOimpl implements CommentDAO{
 		this.sessionFactory = sessionFactory;
 	}
 
-	
+	@Override
 	public TComment queryById(String id) {
 		Session session = sessionFactory.getCurrentSession();
 		return session.get(TComment.class, id);
 	}
 
-	
+	@Override
 	public void update(TComment t) {
 		Session session = sessionFactory.getCurrentSession();
 		Query<TArticle> query = session.createQuery("update TComment t set t.status ='"+t.getStatus()+"'  where t.idString ='"+t.getIdString()+"'");
 		query.executeUpdate();
 	}
 
-	
+	@Override
 	public void add(TComment t) {
 		Session session = sessionFactory.getCurrentSession();
 		session.saveOrUpdate(t);
 		
 	}
 
-	
+	@Override
 	public int count(String column, String ifvalue) {
 		Session session = sessionFactory.getCurrentSession();
 		DetachedCriteria dc = DetachedCriteria.forClass(TComment.class);
@@ -55,13 +56,13 @@ public class CommentDAOimpl implements CommentDAO{
 		return Integer.parseInt(criteria.uniqueResult().toString());
 	}
 
-	
+	@Override
 	public void delete(TComment t) {
 		Session session = sessionFactory.getCurrentSession();
 		session.delete(t);
 	}
 
-	
+	@Override
 	public List<TComment> pagelist(DetachedCriteria dc, int startpage, int pagesize) {
 		Session session = sessionFactory.getCurrentSession();
 		Criteria criteria = dc.getExecutableCriteria(session);
@@ -71,7 +72,7 @@ public class CommentDAOimpl implements CommentDAO{
 	}
 
 	@SuppressWarnings("unchecked")
-	
+	@Override
 	public List<TComment> findcomment(String column, String ifvalue) {
 		Session session = sessionFactory.getCurrentSession();
 		DetachedCriteria dc = DetachedCriteria.forClass(TComment.class);
